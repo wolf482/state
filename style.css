@@ -15,7 +15,7 @@ oc adm top pods --all-namespaces --no-headers | \
     echo "$node $memory"
   done | \
   awk '{
-    mem_mb[$1] += ($2 ~ /Mi$/ ? $2 : $2/1024)  # Convert Gi to Mi if needed
+    mem_mb[$1] += ($2 ~ /Mi$/ ? $2 : $2 * 1024)  # Convert Gi to Mi if needed
   } END {
     for (node in mem_mb) {
       alloc=$(oc get node "$node" -o jsonpath="{.status.allocatable.memory}" | sed "s/Ki//")
