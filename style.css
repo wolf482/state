@@ -8,19 +8,14 @@ body{
     background-color:white;
     color: rgb(52, 165, 52);
 }
-oc adm top pods --all-namespaces --no-headers | \
-  awk '{print $1,$2,$4}' | \
-  while read -r namespace pod memory; do
-    node=$(oc get pod -n "$namespace" "$pod" -o jsonpath='{.spec.nodeName}')
-    echo "$node $memory"
-  done | \
-  awk '{
-    mem_mb[$1] += ($2 ~ /Mi$/ ? $2 : $2 * 1024)  # Convert Gi to Mi if needed
-  } END {
-    for (node in mem_mb) {
-      alloc=$(oc get node "$node" -o jsonpath="{.status.allocatable.memory}" | sed "s/Ki//")
-      printf "%s | Pods Usage: %.1fMi | Allocatable: %.1fMi (%.1f%% Used)\n", 
-        node, mem_mb[node], alloc/1024, (mem_mb[node]/(alloc/1024))*100
-    }
-  }' | \
-  column -t -s "|"
+oc adm top pods -A --no-headers | awk '{print $1,$2,$4}' | while read ns pod mem; do \
+  node=$(oc get pod -n $ns $pod -o jsonpath='{.spec.nodeName}'); \
+  echo "$node $(echo $mem | sed 's/Gi/*1024/;s/Mi//')"; \
+done | awk '{
+  mem[$1] += $2
+} END {
+  for (n in mem) {
+    alloc=$(oc get node $n -o jsonpath="{.status.allocatable.memory}" | sed "s/Ki//"); \
+    printf "%s | %.1fMi | %.1fMi (%.1f%%)\n", n, mem[n], alloc/1024, (mem[n]/(alloc/1024))*100
+  }
+}' | column -t -s "|"
