@@ -8,16 +8,19 @@ body{
     background-color:white;
     color: rgb(52, 165, 52);
 }
-Node Name	Total Memory	Allocatable Memory	System Reserved
-app-0.ilab-ctigtdc12d...	31.3 GiB	16.2 GiB	15.1 GiB
-app-1.ilab-ctigtdc12d...	31.3 GiB	16.2 GiB	15.1 GiB
-app-2.ilab-ctigtdc12d...	31.3 GiB	16.2 GiB	15.1 GiB
-Infra Nodes (infra-*)
-Node Name	Total Memory	Allocatable Memory	System Reserved
-infra-0.ilab-ctigtdc12d...	31.3 GiB	16.2 GiB	15.1 GiB
-infra-1.ilab-ctigtdc12d...	31.3 GiB	16.2 GiB	15.1 GiB
-ETCD Nodes (etcd-*)
-Node Name	Total Memory	Allocatable Memory	System Reserved
-etcd-0.ilab-ctigtdc12d...	31.3 GiB	30.3 GiB	1.0 GiB
-etcd-1.ilab-ctigtdc12d...	31.3 GiB	30.3 GiB	1.0 GiB
-etcd-2.ilab-ctigtdc12d...	31.3 GiB	30.3 GiB	1.0 GiB
+oc adm top pods --all-namespaces --no-headers | \
+  awk '{print $1,$2,$4}' | \
+  while read -r namespace pod memory; do
+    node=$(oc get pod -n "$namespace" "$pod" -o jsonpath='{.spec.nodeName}')
+    echo "$node $memory"
+  done | \
+  awk '{
+    mem_mb[$1] += ($2 ~ /Mi$/ ? $2 : $2/1024)  # Convert Gi to Mi if needed
+  } END {
+    for (node in mem_mb) {
+      alloc=$(oc get node "$node" -o jsonpath="{.status.allocatable.memory}" | sed "s/Ki//")
+      printf "%s | Pods Usage: %.1fMi | Allocatable: %.1fMi (%.1f%% Used)\n", 
+        node, mem_mb[node], alloc/1024, (mem_mb[node]/(alloc/1024))*100
+    }
+  }' | \
+  column -t -s "|"
