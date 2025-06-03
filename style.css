@@ -8,30 +8,31 @@ body{
     background-color:white;
     color: rgb(52, 165, 52);
 }
-Hi Support Team,
+We’ve identified a critical issue where OpenShift system processes are consuming memory reserved for applications, causing:
 
-We’re seeing unusually high memory usage on two OpenShift nodes (app-0 and app-1):
+Actual pod usage is low (24-29% on app nodes, 2-18% on infra/etcd)
 
-oc adm top nodes shows 112% and 104% memory usage (exceeding limits).
+System processes are using ~70-80% of allocatable memory (see attached)
 
-But pods alone only use ~75-85% of allocatable memory.
+Result: Nodes show 104-112% memory usage despite apps being under limits
 
-This suggests ~30-40% of memory is being used by system processes, which seems excessive.
+Impact:
 
-Request: Could you investigate:
+Applications cannot use their allocated memory
 
-Why system memory usage is so high?
+Risk of unnecessary pod evictions
 
-If this is normal or needs fixing?
+Request:
+Please investigate and:
 
-Example (app-0):
+Adjust system memory reservations
 
-Allocatable: 16,634Mi
+Verify why system usage is so high
 
-Pods: 12,536Mi (75%)
+Provide a fix to protect app memory
 
-System: ~6,195Mi (37%)
+Attached:
+📎 node-usage.png - Total memory usage (system + apps)
+📎 pod-usage.png - Just application usage
 
-Total: 112%
-
-Let us know if you need more details. Thanks!
+Let me know if you need additional data. This requires urgent attention.
