@@ -8,4 +8,35 @@ body{
     background-color:white;
     color: rgb(52, 165, 52);
 }
-oc get nodes -o json | jq '.items[] | {name: .metadata.name, capacity: .status.capacity, allocatable: .status.allocatable}'
+oc get nodes -o json | jq -r '
+  .items[] | 
+  select(.metadata.labels["node-role.kubernetes.io/worker"] or .metadata.labels["node-role.kubernetes.io/infra"]) | 
+  {
+    name: .metadata.name,
+    type: (if .metadata.labels["node-role.kubernetes.io/infra"] then "Infra" else "Worker" end),
+    total_memory: .status.capacity.memory,
+    allocatable_memory: .status.allocatable.memory,
+    system_reserved: (
+      ( (.status.capacity.memory | sub("Ki"; "") | tonumber) - 
+      (.status.allocatable.memory | sub("Ki"; "") | tonumber) 
+    ) | tostring + "Ki"
+  }' | 
+jq -s '
+  map(. + {
+    current_usage: (
+      ["oc adm top nodes --no-headers | grep \(.name) | awk \"{print \$4}\""] | 
+      @sh | 
+      as $cmd | 
+      $cmd | 
+      sub("Mi"; "") | 
+      tonumber | 
+      tostring + "Mi"
+    ) | catch("N/A")
+  })
+' | 
+jq -r '
+  ["Node Type", "Node Name", "Total Memory", "Allocatable Memory", "System Reserved", "Current Usage"],
+  (.[] | [.type, .name, .total_memory, .allocatable_memory, .system_reserved, .current_usage]) |
+  @tsv
+' | 
+column -t -s $'\t'
