@@ -8,21 +8,52 @@ body{
     background-color:white;
     color: rgb(52, 165, 52);
 }
-oc adm top pods --all-namespaces --no-headers | \
-  awk '{print $1,$2,$4}' | \
-  while read -r namespace pod memory; do
-    node=$(oc get pod -n "$namespace" "$pod" -o jsonpath='{.spec.nodeName}')
-    echo "$node $memory"
-  done | \
-  awk '{
-    mem_mb[$1] += ($2 ~ /Mi$/ ? $2 : $2 * 1024)  # Convert Gi to Mi if needed
-  } END {
-    for (node in mem_mb) {
-      cmd = "oc get node \"" node "\" -o jsonpath=\"{.status.allocatable.memory}\" | sed \"s/Ki//\""
-      cmd | getline alloc  # Execute shell command and store output in "alloc"
-      close(cmd)
-      printf "%s | Pods Usage: %.1fMi | Allocatable: %.1fMi (%.1f%% Used)\n", 
-        node, mem_mb[node], alloc/1024, (mem_mb[node]/(alloc/1024))*100
-    }
-  }' | \
-  column -t -s "|"
+I hope this email finds you well.
+
+I am reaching out to report an issue regarding high memory utilization on several nodes in our OpenShift cluster, particularly on the app-0 and app-1 nodes.
+
+Issue Details:
+Nodes Affected:
+
+app-0.ilab-ctigtdc12d.ecs.dyn.nsroot.net
+
+app-1.ilab-ctigtdc12d.ecs.dyn.nsroot.net
+
+Observed Behavior:
+
+oc adm top nodes shows 112% and 104% memory usage, exceeding allocatable limits.
+
+However, pod-specific usage (via custom script) indicates only ~75-85% allocatable memory is consumed by pods.
+
+This suggests significant system/kernel memory overhead (~30-40%), which is unusual.
+
+Requested Actions:
+Investigate the root cause of high system memory usage on these nodes.
+
+Check for:
+
+Memory leaks in OpenShift/Kubernetes system components (kubelet, etc.).
+
+Kernel or OS-level memory consumption issues.
+
+Misconfigured resource reservations (e.g., kube-reserved, system-reserved).
+
+Provide recommendations to reduce system overhead or adjust allocatable memory limits if needed.
+
+Supporting Data:
+Node Memory Summary (app-0):
+Allocatable Memory: 16,634Mi
+
+Pods Usage: 12,536Mi (75.4%)
+
+System Usage: ~6,195Mi (37.2%)
+
+Total Reported Usage: 18,731Mi (112% of allocatable)
+
+Full oc adm top nodes Output:
+plaintext
+NAME                                          CPU(cores)  MEMORY(bytes)  MEMOR%
+app-0.ilab-ctigtdc12d.ecs.dyn.nsroot.net     2397m       18731Mi        112%
+app-1.ilab-ctigtdc12d.ecs.dyn.nsroot.net     2079m       17322Mi        104%
+[...]
+Please let us know if additional logs or diagnostics are required. We appreciate your prompt attention to this matter.
