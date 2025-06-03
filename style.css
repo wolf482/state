@@ -8,17 +8,4 @@ body{
     background-color:white;
     color: rgb(52, 165, 52);
 }
-# 🚀 **Red Hat Developer Hub (RHDH) 1.4.1**  
-### _Helm Chart for Effortless Deployment_  
-![Helm](https://img.shields.io/badge/Helm-3-blue?logo=helm)  
-![RHDH](https://img.shields.io/badge/RHDH-1.4.1-red?logo=redhat)  
-
-> **One chart to deploy them all** — Streamline your RHDH 1.4.1 setup with Kubernetes-native automation.  
-
----
-
-**Features**  
-✅ **Single-command deployment**  
-✅ **Customizable via values.yaml**  
-✅ **Built-in health checks & probes**  
-✅ **Scalable for production workloads**  
+oc get nodes -o json | jq '.items[] | {name: .metadata.name, capacity: .status.capacity, allocatable: .status.allocatable}'
