@@ -8,52 +8,30 @@ body{
     background-color:white;
     color: rgb(52, 165, 52);
 }
-I hope this email finds you well.
+Hi Support Team,
 
-I am reaching out to report an issue regarding high memory utilization on several nodes in our OpenShift cluster, particularly on the app-0 and app-1 nodes.
+We’re seeing unusually high memory usage on two OpenShift nodes (app-0 and app-1):
 
-Issue Details:
-Nodes Affected:
+oc adm top nodes shows 112% and 104% memory usage (exceeding limits).
 
-app-0.ilab-ctigtdc12d.ecs.dyn.nsroot.net
+But pods alone only use ~75-85% of allocatable memory.
 
-app-1.ilab-ctigtdc12d.ecs.dyn.nsroot.net
+This suggests ~30-40% of memory is being used by system processes, which seems excessive.
 
-Observed Behavior:
+Request: Could you investigate:
 
-oc adm top nodes shows 112% and 104% memory usage, exceeding allocatable limits.
+Why system memory usage is so high?
 
-However, pod-specific usage (via custom script) indicates only ~75-85% allocatable memory is consumed by pods.
+If this is normal or needs fixing?
 
-This suggests significant system/kernel memory overhead (~30-40%), which is unusual.
+Example (app-0):
 
-Requested Actions:
-Investigate the root cause of high system memory usage on these nodes.
+Allocatable: 16,634Mi
 
-Check for:
+Pods: 12,536Mi (75%)
 
-Memory leaks in OpenShift/Kubernetes system components (kubelet, etc.).
+System: ~6,195Mi (37%)
 
-Kernel or OS-level memory consumption issues.
+Total: 112%
 
-Misconfigured resource reservations (e.g., kube-reserved, system-reserved).
-
-Provide recommendations to reduce system overhead or adjust allocatable memory limits if needed.
-
-Supporting Data:
-Node Memory Summary (app-0):
-Allocatable Memory: 16,634Mi
-
-Pods Usage: 12,536Mi (75.4%)
-
-System Usage: ~6,195Mi (37.2%)
-
-Total Reported Usage: 18,731Mi (112% of allocatable)
-
-Full oc adm top nodes Output:
-plaintext
-NAME                                          CPU(cores)  MEMORY(bytes)  MEMOR%
-app-0.ilab-ctigtdc12d.ecs.dyn.nsroot.net     2397m       18731Mi        112%
-app-1.ilab-ctigtdc12d.ecs.dyn.nsroot.net     2079m       17322Mi        104%
-[...]
-Please let us know if additional logs or diagnostics are required. We appreciate your prompt attention to this matter.
+Let us know if you need more details. Thanks!
