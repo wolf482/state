@@ -8,31 +8,22 @@ body{
     background-color:white;
     color: rgb(52, 165, 52);
 }
-We’ve identified a critical issue where OpenShift system processes are consuming memory reserved for applications, causing:
+Here’s a quick update on my recent contributions and ongoing work:
 
-Actual pod usage is low (24-29% on app nodes, 2-18% on infra/etcd)
+Completed:
+✅ RBAC Setup: Partially completed—UI plugins are now accessible for team members to configure RHDH policies or test deep permissions.
+✅ ETL Catalog: Ingestion finalized, enabling Self-Service Tiles completion.
+✅ RHDH Session Tokens: Timeout extended to 20 mins + refresh token for seamless re-login.
+✅ Podman Request Status: Deployed in Dev Andromeda (orders now persist in DB).
+✅ RHDH 1.4.1 Sandbox: Successfully migrated to Andromeda.
 
-System processes are using ~70-80% of allocatable memory (see attached)
+In Progress:
+🔹 RFT Validation: Sent for review; due by June 9.
+🔹 Keycloak Andromeda Install: Scheduled for next Monday (pending ESA team availability).
+🔹 LightSpeed CICD (1.5.1): Chart/certification in progress.
+🔹 UAT/PROD PSQL DB CHR: Request underway.
 
-Result: Nodes show 104-112% memory usage despite apps being under limits
+Pending:
+⏳ Orchestrator CICD: Awaiting next steps.
 
-Impact:
-
-Applications cannot use their allocated memory
-
-Risk of unnecessary pod evictions
-
-Request:
-Please investigate and:
-
-Adjust system memory reservations
-
-Verify why system usage is so high
-
-Provide a fix to protect app memory
-
-Attached:
-📎 node-usage.png - Total memory usage (system + apps)
-📎 pod-usage.png - Just application usage
-
-Let me know if you need additional data. This requires urgent attention.
+Let me know if you’d like to discuss priorities or adjustments. Happy to collaborate further!
