@@ -8,16 +8,4 @@ body{
     background-color:white;
     color: rgb(52, 165, 52);
 }
-Moving forward, anyone who needs access to [system/tool] must submit a CMP request for the AD group: [Group Name].
-
-No exceptions—this is the standard process.
-
-I will not manually handle access requests while I’m on leave or otherwise unavailable.
-
-If you haven’t submitted a request, you don’t have access—no more excuses.
-
-If you’re blocked, check your email for approval links or follow up with the IT/access team—not me.
-
-This ensures fairness and accountability. Let’s all take responsibility for our own access needs.
-
-Thanks,
+oc get pods -A --field-selector=status.phase=Pending -o json | jq -r '.items[] | [.metadata.namespace, .metadata.name] | @tsv' | xargs -n2 sh -c 'oc delete pod $1 -n $0'
