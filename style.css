@@ -1,13 +1,1 @@
-Confirmed Approach: Per Chad’s note, this will be rolled out via ACM (Advanced Cluster Management), not manual Changes (CH).
-
-Action for Arun/Neeraj:
-
-No need to create manual Change tickets for UAT/Prod.
-
-Instead, coordinate with the ACM team to ensure the policies/bundles for Keycloak are prepped and scheduled.
-
-Next Steps:
-
-ACM team to confirm the deployment timeline.
-
-Test team to validate post-ACM rollout (no manual installs needed).
+Red Hat Orchestrator Operator is a declarative solution for deploying and managing serverless workflows and Backstage integrations in OpenShift and Kubernetes environments. It provides a standardized approach to orchestration, enabling repeatable and automated workflows across multi-cluster deployments while reducing manual overhead.
