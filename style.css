@@ -1,12 +1,3 @@
-Access Red Hat Developer Hub: Open your web browser and navigate to the Red Hat Developer Hub application. Retrieve the URL using the following OpenShift CLI command.
+You’ve requested the documentation for [Product Name]. Could you confirm if you (or anyone on your team) need access? If so, I’d be happy to arrange it promptly.
 
-oc get route backstage-backstage -n rhdh-operator -o jsonpath='{.spec.host}'
-Make sure the route is accessible to you locally.
-
-Login to Backstage Login to Backstage with the Guest account.
-
-Navigate to Orchestrator: Navigate to the Orchestrator page by clicking on the Orchestrator icon in the left navigation menu. orchestratorIcon
-
-Execute Greeting Workflow: Click on the ‘Execute’ button in the ACTIONS column of the Greeting workflow. workflowsPage The ‘Run workflow’ page will open. Click ‘Next step’ and then ‘Run’ executePageNext executePageRun
-
-Monitor Workflow Status: Wait for the status of the Greeting workflow execution to become Completed. This may take a moment. workflowCompleted
+Let me know—I’ll ensure you have everything neede
