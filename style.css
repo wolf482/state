@@ -1,16 +1,13 @@
-Hi Kuldeep,
+Confirmed Approach: Per Chad’s note, this will be rolled out via ACM (Advanced Cluster Management), not manual Changes (CH).
 
-I hope this message finds you well. I’m following up to confirm the timeline for the repave of the cluster (RHDH/Keycloak), as we haven’t received an update since the initial go-ahead was confirmed.
+Action for Arun/Neeraj:
 
-Our team is ready to test immediately post-repave and is eager to proceed. Given that the original target was earlier this week, could you:
+No need to create manual Change tickets for UAT/Prod.
 
-Confirm if there are any outstanding blockers or dependencies from your side?
+Instead, coordinate with the ACM team to ensure the policies/bundles for Keycloak are prepped and scheduled.
 
-Share the revised schedule—ideally targeting tomorrow (or ASAP) if feasible?
+Next Steps:
 
-We’d appreciate advance notice once the cluster is available for validation to align our testing efforts. Please let us know if any additional details are needed from our end to expedite this.
+ACM team to confirm the deployment timeline.
 
-Looking forward to your confirmation.
-
-Best regards,
-Yon
+Test team to validate post-ACM rollout (no manual installs needed).
