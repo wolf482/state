@@ -1,7 +1,3 @@
-GRANT ALL PRIVILEGES ON SCHEMA new_schema TO target_role;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA new_schema TO target_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA new_schema GRANT ALL PRIVILEGES ON TABLES TO target_role;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA new_schema TO target_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA new_schema GRANT ALL PRIVILEGES ON SEQUENCES TO target_role;
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA new_schema TO target_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA new_schema GRANT ALL PRIVILEGES ON FUNCTIONS TO target_role;
+SELECT grantee, privilege_type 
+FROM information_schema.role_schema_grants 
+WHERE schema_name = 'your_schema_name';
