@@ -1,9 +1,11 @@
 SELECT 
-    CASE 
-        WHEN client_addr IS NULL AND backend_type = 'client backend' THEN 'local'
-        WHEN client_addr IS NULL THEN backend_type
-        ELSE client_addr::text
-    END AS connection_origin,
-    count(*)
+    pid,
+    usename AS username,
+    datname AS database,
+    client_addr AS ip_address,
+    application_name,
+    backend_start,
+    state,
+    query
 FROM pg_stat_activity
-GROUP BY connection_origin;
+WHERE client_addr IS NOT NULL;
