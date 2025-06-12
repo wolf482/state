@@ -1,21 +1,7 @@
-Hi [Team/Names],
-
-I hope the patching is progressing smoothly.
-
-Given the late hour and my limited availability right now, could we:
-
-Keep the RHDH 1.5 application down if any issues arise (rather than attempting immediate fixes).
-
-Defer full validation to my work hours [specify time, e.g., "tomorrow morning at 8 AM ET"]?
-
-This will allow me to:
-
-Thoroughly test the environment with fresh focus
-
-Document any issues systematically
-
-Collaborate with the team during overlapping hours
-
-If urgent action is needed tonight, please flag it to me, and I’ll assist as best I can. Otherwise, I’ll take ownership of validation first thing tomorrow.
-
-Thank you for your support!
+GRANT ALL PRIVILEGES ON SCHEMA new_schema TO target_role;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA new_schema TO target_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA new_schema GRANT ALL PRIVILEGES ON TABLES TO target_role;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA new_schema TO target_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA new_schema GRANT ALL PRIVILEGES ON SEQUENCES TO target_role;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA new_schema TO target_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA new_schema GRANT ALL PRIVILEGES ON FUNCTIONS TO target_role;
