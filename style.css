@@ -1,3 +1,8 @@
-SELECT grantee, privilege_type 
-FROM information_schema.role_schema_grants 
-WHERE schema_name = 'your_schema_name';
+GRANT USAGE, CREATE ON SCHEMA permission TO citi_pg_app_owner;
+
+-- 2. Grant all privileges on existing tables
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA permission TO citi_pg_app_owner;
+
+-- 3. Set default privileges for future tables
+ALTER DEFAULT PRIVILEGES IN SCHEMA permission 
+GRANT ALL PRIVILEGES ON TABLES TO citi_pg_app_owner;
