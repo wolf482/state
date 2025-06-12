@@ -1,15 +1,27 @@
-I’m pleased to share that the migration from RHDH 1.4 to 1.5 has been successfully completed in both the Dev/Andromeda and Sandbox environments. These environments are now fully operational on RHDH 1.5, and teams can start leveraging the new features and improvements.
+I’d appreciate your expertise to review and optimize our RHDH entity ingestion, focusing on:
 
-Next Steps:
-Begin Testing/Development – Please direct your workloads to the updated environments.
+Current Workflow
 
-Report Issues – If you encounter any unexpected behavior or need assistance, tag me (@YourName) or open a ticket with details (error logs, steps to reproduce, etc.).
+Validate polling-based ingestion (via processingInterval) vs. webhook-triggered updates.
 
-Documentation – Ensure you review the [release notes/confluence page] for changes that may impact your workflows.
+Key tradeoffs:
 
-Support:
-For urgent issues, ping me directly on Slack/Teams.
+Polling intervals: Balance freshness (frequency: {minutes: 10}) vs. load.
 
-For non-critical items, use JIRA/ServiceNow (include [RHDH 1.5 Migration] in the subject).
+Webhooks: Immediate updates (if configured).
 
-Thanks for your collaboration! Let’s ensure a smooth transition.
+Database impact: Scans query/update backstage_plugin_catalog tables.
+
+Improvements
+
+Custom processors for metadata enrichment/validation.
+
+Scalability tuning for Bitbucket/GitHub providers.
+
+Next Steps
+
+Sync to review configs/logs (I’ve prepared samples).
+
+Test PoCs (e.g., shorter intervals for critical repos).
+
+Let me know your availability.
