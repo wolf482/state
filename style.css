@@ -1,29 +1,5 @@
-Subject: Transition to feature/rhdh1.5.1 & Sandbox Environment Updates
+Hi Vineet,
 
-Message:
-Team, please use the feature/rhdh1.5.1 branch for all changes in RHDH Dev and Sandbox moving forward.
+I wanted to provide some clarity regarding the migration from 1.4 to 1.5. The process was fully completed, including the deployment of the latest plugin code, app configurations, and secrets. However, we did identify that two config values were missing in the app config file, which likely triggered the NotImplementedError. This was not due to an initial setup oversight but rather an oversight in the config validation during migration.
 
-Key Updates:
-
-Kafka Secrets/Certs: Import in progress—no blockers. Completion notice will follow.
-
-Keycloak: Flip and repave planned soon. Timeline TBD.
-
-Sandbox Deployment:
-
-The manifest must be flipped (Harness currently defaults to 25d and is out of sync).
-
-This is a known issue with Lightspeed support—not a deployment blocker but needs resolution.
-
-12d Early Sandbox:
-
-Will be decommissioned post-repave to reclaim resources.
-
-Action Required: Promote any needed deployments to Dev or a new Sandbox in Dev before decommissioning.
-
-A backup will be taken once confirmed by iLab SA Clusters before shutdown.
-
-If developers need this environment restored post-repave, notify me for a refresh.
-
-Next Steps: Proceed with the above, and reach out with any questions or dependencies.
-
+I’ve since rectified the missing values, and the system is now functioning as expected. If you or the team notice anything else during validation, please let me know—I’m happy to address any concerns promptly.
