@@ -1,5 +1,17 @@
-Hi Vineet,
+Hi Team,
 
-I wanted to provide some clarity regarding the migration from 1.4 to 1.5. The process was fully completed, including the deployment of the latest plugin code, app configurations, and secrets. However, we did identify that two config values were missing in the app config file, which likely triggered the NotImplementedError. This was not due to an initial setup oversight but rather an oversight in the config validation during migration.
+To prevent potential breakpoints, we need to ensure that any updates to Orion secrets are immediately mirrored in RHDH. This includes:
 
-I’ve since rectified the missing values, and the system is now functioning as expected. If you or the team notice anything else during validation, please let me know—I’m happy to address any concerns promptly.
+Automated checks (if possible) or manual validation post-deployment.
+
+Documentation of changes to maintain traceability.
+
+Alert mechanisms to flag discrepancies during deployments.
+
+Next Steps:
+
+Confirm if current CI/CD pipelines include cross-validation for secrets.
+
+Designate owners for Orion/RHDH secret synchronization (or propose a shared checklist).
+
+Let’s discuss in the next standup or a quick sync to align on the process. Open to suggestions on streamlining this further.
