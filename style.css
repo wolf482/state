@@ -1,9 +1,21 @@
-Thanks for reaching out. For clarity and efficiency, I’d recommend including me in any discussions regarding iLab cluster access or admin roles for our team. This will help ensure alignment and avoid duplication of efforts.
+Hi Team,
 
-To answer your question:
+I’d like to escalate the need for a full cluster repave due to ongoing instability caused by memory overcommitment. This is directly impacting my ability to progress with the OpenShift Serverless Logic Operator installation (subscription/plan errors), despite minimal resource requirements.
 
-AD Group Name: [Insert AD Group Name] (includes all team members)
+Key Points:
 
-Next Steps: Let me know if you need additional details or support with permissions.
+Root Cause: The shared environment is prone to corruption by multiple users, and repaving is the most reliable solution.
 
-I’m happy to join any existing threads or meetings on this topic—please loop me in.
+Impact: This is now a critical blocker for my deliverables.
+
+Ownership: While we have admin access, the cluster is managed externally, and coordinated action is needed.
+
+Request:
+
+SA Admin Team: Please prioritize repaving to restore stability.
+
+All Users: Share your availability for a maintenance window to minimize disruption.
+
+Let’s align on next steps today—I’m happy to provide logs or join a sync to clarify the urgency.
+
+Thanks,
