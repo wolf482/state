@@ -1,17 +1,29 @@
-The RHDH product handles RBAC (Role-Based Access Control) at the application layer, providing granular permissions and audit logging for all SonataWorkflow endpoints. This means:
+Subject: Transition to feature/rhdh1.5.1 & Sandbox Environment Updates
 
-Access control to workflow orchestration functionality is managed entirely within RHDH's built-in RBAC system
+Message:
+Team, please use the feature/rhdh1.5.1 branch for all changes in RHDH Dev and Sandbox moving forward.
 
-All API endpoint accesses are audited through RHDH's logging mechanisms
+Key Updates:
 
-For the operator installation itself:
+Kafka Secrets/Certs: Import in progress—no blockers. Completion notice will follow.
 
-This is indeed a basic standalone operator deployment
+Keycloak: Flip and repave planned soon. Timeline TBD.
 
-No additional RBAC configuration is required at the Kubernetes/OpenShift level
+Sandbox Deployment:
 
-Network access to the orchestrator is restricted by OpenShift Network Policies, providing an additional layer of security at the platform level
+The manifest must be flipped (Harness currently defaults to 25d and is out of sync).
 
-The operator's default RBAC configuration is sufficient as all permission management flows through RHDH's centralized access control system. This design maintains security while simplifying the operator deployment.
+This is a known issue with Lightspeed support—not a deployment blocker but needs resolution.
 
-Let me know if you'd like me to elaborate on any aspect of this architecture.
+12d Early Sandbox:
+
+Will be decommissioned post-repave to reclaim resources.
+
+Action Required: Promote any needed deployments to Dev or a new Sandbox in Dev before decommissioning.
+
+A backup will be taken once confirmed by iLab SA Clusters before shutdown.
+
+If developers need this environment restored post-repave, notify me for a refresh.
+
+Next Steps: Proceed with the above, and reach out with any questions or dependencies.
+
