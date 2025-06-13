@@ -1,1 +1,8 @@
-oc logs -l app.kubernetes.io/name=keycloak-operator -n openshift-operators --tail=100
+oc patch deploy keycloak-operator -n openshift-operators --type=json -p '[{
+  "op": "add",
+  "path": "/spec/template/spec/containers/0/env/-",
+  "value": {
+    "name": "OPERATOR_STATEFULSET_UPDATE_TIMEOUT",
+    "value": "300000"  # 5 minutes in milliseconds
+  }
+}]'
