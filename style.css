@@ -1,15 +1,9 @@
-Thanks, Rajashree, for proposing the dual-secret injection approach. To refine this further:
+Thanks for reaching out. For clarity and efficiency, I’d recommend including me in any discussions regarding iLab cluster access or admin roles for our team. This will help ensure alignment and avoid duplication of efforts.
 
-Short-Term (Migration Phase):
+To answer your question:
 
-Agree on sourcing both secrets during startup, but with strict validation to ensure parity (e.g., checksum comparison or automated alerts on mismatch).
+AD Group Name: [Insert AD Group Name] (includes all team members)
 
-Document a clear rollback plan if inconsistencies arise.
+Next Steps: Let me know if you need additional details or support with permissions.
 
-Long-Term (Post-Migration):
-
-As Rajashree noted, we’ll consolidate to RHDH secrets once migration is complete. This should include:
-
-Deprecation timeline for Orion secrets.
-
-Audit trails to confirm no legacy dependencies remain.
+I’m happy to join any existing threads or meetings on this topic—please loop me in.
