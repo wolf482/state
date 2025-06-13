@@ -1,1 +1,22 @@
-The OpenShift Serverless Logic Operator installation appears to be stuck in a non-progressing state—the subscription is not being processed by the Operator Lifecycle Manager (OLM), and the installation never completes. 
+Hi [Admin's Name],
+
+To isolate the issue, I confirmed that the same CatalogSource/Operator installs successfully in other clusters. This suggests the problem is environment-specific, likely due to:
+
+OLM or cluster-level instability (memory contention, corrupted state).
+
+Subscription conflicts unique to this cluster.
+
+Impact:
+
+This is now a critical blocker for [project/deadline].
+
+Manual troubleshooting (e.g., OLM reset) or repaving remains the fastest resolution path.
+
+Request:
+Since you have deeper cluster access, could you either:
+
+Attempt the installation yourself (to rule out permission/resource issues)?
+
+Escalate to the infrastructure team for immediate inspection?
+
+I’m happy to provide logs or compare configurations. Let me know how we can prioritize this.
