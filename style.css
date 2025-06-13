@@ -1,17 +1,15 @@
-Hi Team,
+Thanks, Rajashree, for proposing the dual-secret injection approach. To refine this further:
 
-To prevent potential breakpoints, we need to ensure that any updates to Orion secrets are immediately mirrored in RHDH. This includes:
+Short-Term (Migration Phase):
 
-Automated checks (if possible) or manual validation post-deployment.
+Agree on sourcing both secrets during startup, but with strict validation to ensure parity (e.g., checksum comparison or automated alerts on mismatch).
 
-Documentation of changes to maintain traceability.
+Document a clear rollback plan if inconsistencies arise.
 
-Alert mechanisms to flag discrepancies during deployments.
+Long-Term (Post-Migration):
 
-Next Steps:
+As Rajashree noted, we’ll consolidate to RHDH secrets once migration is complete. This should include:
 
-Confirm if current CI/CD pipelines include cross-validation for secrets.
+Deprecation timeline for Orion secrets.
 
-Designate owners for Orion/RHDH secret synchronization (or propose a shared checklist).
-
-Let’s discuss in the next standup or a quick sync to align on the process. Open to suggestions on streamlining this further.
+Audit trails to confirm no legacy dependencies remain.
