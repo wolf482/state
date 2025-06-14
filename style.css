@@ -1,1 +1,5 @@
-oc get configmap config -n openshift-kube-apiserver -o json | jq '.data["config.yaml"]' | jq '.apiServerArguments'
+# Get an API server pod name
+API_POD=$(oc get pods -n openshift-kube-apiserver --no-headers | awk '{print $1}' | head -1)
+
+# Start a debug shell inside the pod
+oc debug -n openshift-kube-apiserver pod/$API_POD -- chroot /host /bin/bash
