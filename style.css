@@ -1,1 +1,1 @@
-oc adm node-logs --role=master --path=apiserver/audit.log | grep -A 20 "24bb52b8-7970-482b-a8bb-da8601a17434"
+oc get configmap config -n openshift-kube-apiserver -o json | jq '.data["config.yaml"]' | jq '.apiServerArguments'
