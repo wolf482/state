@@ -1,8 +1,24 @@
-oc patch deploy keycloak-operator -n openshift-operators --type=json -p '[{
-  "op": "add",
-  "path": "/spec/template/spec/containers/0/env/-",
-  "value": {
-    "name": "OPERATOR_STATEFULSET_UPDATE_TIMEOUT",
-    "value": "300000"  # 5 minutes in milliseconds
-  }
-}]'
+Root Cause:
+
+The cluster issues are not due to inefficient resource handling by your team.
+
+The degraded state is caused by:
+
+Aqua Security webhooks failing (external component you don’t control).
+
+Encryption migration (normal cluster operation, not your workload).
+
+Action Plan:
+
+Escalate to the security team (owners of Aqua) to fix or remove the failing webhooks (imageassurance.aquasec.com).
+
+Document: Share this analysis with OpenShift support to clarify:
+
+The API server errors are from Aqua, not your apps.
+
+Encryption migration is a platform process, unrelated to your team.
+
+Key Message to Support:
+"The degraded state is unrelated to our workloads. The issues stem from external components (Aqua) and cluster maintenance tasks. Please coordinate with the security team for resolution."
+
+No action is required from your team on pod/resource cleanup—this is a red herring. Focus on getting the right owners (Aqua/security) engaged.
