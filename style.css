@@ -1,1 +1,1 @@
-Could you please confirm once this is resolved? I truly appreciate your help—this is currently blocking my work, and your support will allow me to move forward. Thank you!
+oc adm node-logs --role=master --path=apiserver/audit.log | grep -A 20 "24bb52b8-7970-482b-a8bb-da8601a17434"
