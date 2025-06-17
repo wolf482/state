@@ -1,39 +1,9 @@
-helm repo add keycloak https://keycloak.github.io/keycloak-helm-charts
-helm repo update
-
-# values.yaml
-apiVersion: k8s.keycloak.org/v2alpha1
-kind: Keycloak
-metadata:
-  name: rhdh-external-kc
-  namespace: cti-svcs-orion-177398
-spec:
-  db:
-    vendor: postgres
-    host: 10.19.237.9
-    port: 1524
-    database: rhdh_dev
-    schema: keycloak
-    usernameSecret:
-      name: rhdh-db-secret
-      key: db_user
-    passwordSecret:
-      name: rhdh-db-secret
-      key: db_password
-    poolInitialSize: 1
-    poolMinSize: 2
-    poolMaxSize: 3
-  hostname:
-    hostname: k-cti-svcs-orion-177398.apps.namangtd00ld.ecs.dyn.nsroot.net
-  http:
-    tlsSecret: rhbk-external-tls-secret
-    ingress:
-      className: openshift-default
-  instances: 3
-  truststores:
-    my-truststore:
-      secret:
-        name: rhbk-trustore-secret
-
-
-helm install rhdh-keycloak keycloak/keycloak -f values.yaml --version 26.0.8
+keycloak-deployment/
+├── Chart.yaml          # Chart metadata
+├── values.yaml         # Default configuration values
+├── templates/
+│   ├── _helpers.tpl    # Template helpers
+│   ├── keycloak-cr.yaml # Your Keycloak Custom Resource
+│   ├── secrets.yaml    # For any needed secrets (optional)
+│   └── NOTES.txt       # Post-install notes
+└── README.md           # Documentation
