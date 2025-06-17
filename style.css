@@ -1,35 +1,39 @@
-I wanted to provide you with an update on the deployment of the Keycloak instance using the Red Hat Build of Keycloak Operator. The installation has encountered an issue, and we are actively collaborating with the Core and Platform teams to identify the root cause. Below is a summary of our progress and current status:
+helm repo add keycloak https://keycloak.github.io/keycloak-helm-charts
+helm repo update
 
-Current Situation
-The Keycloak instance is failing silently during creation, specifically when the Operator attempts to create the required StatefulSet. Key observations include:
+# values.yaml
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: rhdh-external-kc
+  namespace: cti-svcs-orion-177398
+spec:
+  db:
+    vendor: postgres
+    host: 10.19.237.9
+    port: 1524
+    database: rhdh_dev
+    schema: keycloak
+    usernameSecret:
+      name: rhdh-db-secret
+      key: db_user
+    passwordSecret:
+      name: rhdh-db-secret
+      key: db_password
+    poolInitialSize: 1
+    poolMinSize: 2
+    poolMaxSize: 3
+  hostname:
+    hostname: k-cti-svcs-orion-177398.apps.namangtd00ld.ecs.dyn.nsroot.net
+  http:
+    tlsSecret: rhbk-external-tls-secret
+    ingress:
+      className: openshift-default
+  instances: 3
+  truststores:
+    my-truststore:
+      secret:
+        name: rhbk-trustore-secret
 
-The StatefulSet creation fails with a 10ms timeout when applying a patch, likely because the StatefulSet resource does not exist at the time of the operation.
 
-No explicit errors related to permissions or quotas have been observed in cluster events.
-
-We captured an error ID from the API server logs, but without access to audit logs, further analysis was limited.
-
-Steps Taken So Far
-Verified ServiceAccount Permissions: Confirmed that the Operator’s ServiceAccount has the necessary permissions to create StatefulSets.
-
-Checked Cluster Events & Quotas: No visible issues found in events or resource constraints.
-
-Reviewed Webhooks: Investigated potential blocks from admission webhooks (e.g., StackRox). While no clear issues were found, this requires deeper analysis due to multiple webhooks in place.
-
-Opened a Red Hat Support Case: Logs and details have been shared with Red Hat for further diagnostics.
-
-Next Steps & Challenges
-Collaboration with Core/Platform Teams: Working closely to align with cluster security policies and investigate potential discrepancies between our environment and iLab.
-
-Reproducing the Issue: Difficult to replicate in iLab due to differences in security policies. Adjustments may be needed to mirror production conditions.
-
-Red Hat Support: Awaiting additional insights from the open case.
-
-Action Plan
-Prioritize the webhook review to rule out policy-related blocks.
-
-Coordinate with the Platform team to explore temporary adjustments for testing.
-
-Provide updates as we progress with Red Hat’s recommendations.
-
-We are treating this as a high-priority issue and will keep you informed of any significant developments. Please let me know if you’d like a more detailed briefing or additional context.
+helm install rhdh-keycloak keycloak/keycloak -f values.yaml --version 26.0.8
