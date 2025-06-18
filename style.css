@@ -1,9 +1,25 @@
-A quick clarification to avoid deployment issues: The 12d sandbox is no longer available for use as part of our migration. All deployments must now target 25d or 001d environments.
+9. Session Expiry (20min)
+The session refreshes automatically with a new token when active. No re-login is needed unless idle for 20min.
 
-Action Items:
+11. Performance Issues
+Network/Load Issues: Cluster had temporary slowness (~6:33 PM CT). Now resolved.
 
-If you have any remaining resources or configurations in 12d, migrate them to 25d/001d immediately.
+Profile Data Loading: Monitor resource allocation in che-dev. If persistent, check backend queries.
 
-Update CI/CD pipelines, scripts, or documentation referencing 12d to reflect the new environments.
+12. RBAC Plugin
+Confirm custom roles/permissions are:
 
-Impact: Deployments targeting 12d will fail, so please verify your setups. Let me know if you need help with the migration—happy to assist.
+Defined in app-config.yaml (dev).
+
+Propagated to higher envs (e.g., via Helm/ArgoCD).
+
+Share the CSV file for verification.
+
+10. User Entity Default (Direct Relationships)
+Fixed in Backstage 1.2x.0. Specify if you see issues (e.g., group inheritance delays).
+
+Next Steps:
+
+For #7/#8 (UI/display issues), provide screenshots.
+
+For #10, clarify the exact problem if persists after upgrade.
