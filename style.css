@@ -1,7 +1,9 @@
-Regarding the yarn.lock issue in the init container during migration, I’ve identified a fix: we can modify the container’s command to include rm -rf yarn.lock before executing the installation script. Here’s the tested solution:
+A quick clarification to avoid deployment issues: The 12d sandbox is no longer available for use as part of our migration. All deployments must now target 25d or 001d environments.
 
-yaml
-command:  
-  - /bin/sh  
-  - -c  
-  - "rm -rf yarn.lock && ./install-dynamic-plugins.sh /dynamic-plugins-root"  
+Action Items:
+
+If you have any remaining resources or configurations in 12d, migrate them to 25d/001d immediately.
+
+Update CI/CD pipelines, scripts, or documentation referencing 12d to reflect the new environments.
+
+Impact: Deployments targeting 12d will fail, so please verify your setups. Let me know if you need help with the migration—happy to assist.
