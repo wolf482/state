@@ -1,1 +1,7 @@
-"Just a quick reminder: before deploying, please ensure you’ve pulled the latest changes from [branch] and confirm in the group chat. This helps avoid misconfigurations like the OIDC issue we saw today. Thanks, team!"
+Regarding the yarn.lock issue in the init container during migration, I’ve identified a fix: we can modify the container’s command to include rm -rf yarn.lock before executing the installation script. Here’s the tested solution:
+
+yaml
+command:  
+  - /bin/sh  
+  - -c  
+  - "rm -rf yarn.lock && ./install-dynamic-plugins.sh /dynamic-plugins-root"  
