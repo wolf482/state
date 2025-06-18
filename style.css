@@ -1,73 +1,9 @@
-1. Chart.yaml
-yaml
 apiVersion: v2
-name: keycloak-deployment
+name: 177398-orion-keycloak-deployment  # Modified to meet naming requirements
 description: A Helm chart for deploying Keycloak via Operator
 version: 0.1.0
 appVersion: "26.0.8"
 dependencies:
-- name: keycloak-operator
-  version: "x.x.x" # Specify operator version if needed
-  repository: https://charts.operatorhub.io # Or your operator source
-
-2. values.yaml
-yaml
-# Default values for keycloak-deployment
-keycloak:
-  name: rhdh-external-kc
-  namespace: cti-svcs-orion-177398
-  instances: 3
-  
-  db:
-    vendor: postgres
-    host: 10.19.237.9
-    port: 1524
-    database: rhdh_dev
-    schema: keycloak
-    pool:
-      initialSize: 1
-      minSize: 2
-      maxSize: 3
-    secretName: rhdh-db-secret
-  
-  hostname: k-cti-svcs-orion-177398.apps.namangtd001d.ecs.dyn.nsroot.net
-  tlsSecret: rhbk-external-tls-secret
-  truststoreSecret: rhbk-trustore-secret
-  
-  ingress:
-    className: openshift-default
-
- templates/keycloak-cr.yaml
-yaml
-apiVersion: k8s.keycloak.org/v2alpha1
-kind: Keycloak
-metadata:
-  name: {{ .Values.keycloak.name }}
-  namespace: {{ .Values.keycloak.namespace }}
-spec:
-  db:
-    port: {{ .Values.keycloak.db.port }}
-    schema: {{ .Values.keycloak.db.schema }}
-    usernameSecret:
-      key: db_user
-      name: {{ .Values.keycloak.db.secretName }}
-    vendor: {{ .Values.keycloak.db.vendor }}
-    host: {{ .Values.keycloak.db.host }}
-    poolInitialSize: {{ .Values.keycloak.db.pool.initialSize }}
-    poolMaxSize: {{ .Values.keycloak.db.pool.maxSize }}
-    passwordSecret:
-      key: db_password
-      name: {{ .Values.keycloak.db.secretName }}
-    poolMinSize: {{ .Values.keycloak.db.pool.minSize }}
-    database: {{ .Values.keycloak.db.database }}
-  hostname:
-    hostname: {{ .Values.keycloak.hostname }}
-  http:
-    tlsSecret: {{ .Values.keycloak.tlsSecret }}
-  ingress:
-    className: {{ .Values.keycloak.ingress.className }}
-  instances: {{ .Values.keycloak.instances }}
-  truststores:
-    my-truststore:
-      secret:
-        name: {{ .Values.keycloak.truststoreSecret }}
+- name: rhbk-operator
+  version: "26.0.8-opp.1"
+  repository: https://github.com/keycloak/keycloak
