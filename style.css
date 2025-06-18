@@ -1,9 +1,1 @@
-apiVersion: v2
-name: 177398-orion-keycloak-deployment  # Modified to meet naming requirements
-description: A Helm chart for deploying Keycloak via Operator
-version: 0.1.0
-appVersion: "26.0.8"
-dependencies:
-- name: rhbk-operator
-  version: "26.0.8-opp.1"
-  repository: https://github.com/keycloak/keycloak
+"Just a quick reminder: before deploying, please ensure you’ve pulled the latest changes from [branch] and confirm in the group chat. This helps avoid misconfigurations like the OIDC issue we saw today. Thanks, team!"
