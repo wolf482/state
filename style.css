@@ -1,3 +1,8 @@
+If there are no changes, we’ll proceed with mapping the Casbin role app_ecs_dev_users-developer to users in the app_ecs_dev AD group. Otherwise, please share details on the updated approach so we can adjust our policies accordingly.
+
+Thank you for your time—I appreciate your guidance to ensure our permissions remain consistent and secure.
+
+
 Structure: All entries follow p, adminGroup, {resourceType}, {action}, {permission}
  RBAC model
 
