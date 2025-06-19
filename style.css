@@ -1,6 +1,17 @@
 Structure: All entries follow p, adminGroup, {resourceType}, {action}, {permission}
  RBAC model
 
+g, bob, app_ecs_dev_users-developer, _
+p, app_ecs_dev_users-developer, dashboard.starredDeveloperStacks, read
+p, app_ecs_dev_users-developer, dashboard.myWorkSpaces, read
+p, app_ecs_dev_users-developer, dashboard.projects.myWork, read
+p, app_ecs_dev_users-developer, dashboard.starredEntities, read
+p, app_ecs_dev_users-developer, dashboard.summary, read
+p, app_ecs_dev_users-developer, catalog.location.create, create
+p, app_ecs_dev_users-developer, selfService.manageSelfServicesTab.read, read
+p, app_ecs_dev_users-developer, catalog.location.read, read
+p, app_ecs_dev_users-developer, catalog.entity.create, create
+                                                              
 p, adminGroup, catalog, entity, create
 p, adminGroup, catalog, entity, read
 p, adminGroup, catalog, location, read
