@@ -1,25 +1,29 @@
-9. Session Expiry (20min)
-The session refreshes automatically with a new token when active. No re-login is needed unless idle for 20min.
+Structure: All entries follow p, adminGroup, {resourceType}, {action}, {permission}
+ RBAC model
 
-11. Performance Issues
-Network/Load Issues: Cluster had temporary slowness (~6:33 PM CT). Now resolved.
-
-Profile Data Loading: Monitor resource allocation in che-dev. If persistent, check backend queries.
-
-12. RBAC Plugin
-Confirm custom roles/permissions are:
-
-Defined in app-config.yaml (dev).
-
-Propagated to higher envs (e.g., via Helm/ArgoCD).
-
-Share the CSV file for verification.
-
-10. User Entity Default (Direct Relationships)
-Fixed in Backstage 1.2x.0. Specify if you see issues (e.g., group inheritance delays).
-
-Next Steps:
-
-For #7/#8 (UI/display issues), provide screenshots.
-
-For #10, clarify the exact problem if persists after upgrade.
+p, adminGroup, catalog, entity, create
+p, adminGroup, catalog, entity, read
+p, adminGroup, catalog, location, read
+p, adminGroup, catalog, location, create
+p, adminGroup, selfService, manageSelfServicesTab, read
+p, adminGroup, selfService, requestTableView, read
+p, adminGroup, selfService, changeCpuQuota, update
+p, adminGroup, selfService, changeMemoryQuota, update
+p, adminGroup, selfService, deployServiceMesh, update
+p, adminGroup, selfService, modifyResource, update
+p, adminGroup, selfService, changePodLimit, update
+p, adminGroup, selfService, apearmytest, update
+p, adminGroup, selfService, apearmyEnablement, update
+p, adminGroup, selfService, createAndromedaProject, update
+p, adminGroup, selfService, apeArmyModifyEndTime, update
+p, adminGroup, selfService, modifyUsersToProject, update
+p, adminGroup, selfService, serverLessNetworkPolicy, update
+p, adminGroup, selfService, sourceDestinationNetworkPolicy, update
+p, adminGroup, selfService, pvPvcPreChecks, update
+p, adminGroup, selfService, pvPvcCreation, update
+p, adminGroup, actionList, actionTableData, create
+p, adminGroup, selfService, ecsCluster, update
+p, adminGroup, selfService, redisOperator, update
+p, adminGroup, selfService, reclaimResourceFromBankToExistingProject, update
+p, adminGroup, selfService, reclaimResourceFromBankToBankProject, update
+p, adminGroup, selfService, ocpServiceAccountCreation, update
