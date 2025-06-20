@@ -1,3 +1,15 @@
+
+We can host the database container in your personal LVM, which will give you full control to start/stop the container as needed. This option is ideal for your current demo work, as it involves custom plugins for Red Hat Developer Hub (RHDH) and doesn’t require a dedicated environment.
+
+If your needs evolve and require a more robust setup, we can migrate the container to the dedicated DB Host for Dev. However, at this stage, hosting it alongside the existing Orion RHDH Dev/Sandbox environments may not be necessary.
+
+Let us know if you’d like to proceed with the LVM option or discuss scaling up in the future.
+
+
+
+
+
+
 If there are no changes, we’ll proceed with mapping the Casbin role app_ecs_dev_users-developer to users in the app_ecs_dev AD group. Otherwise, please share details on the updated approach so we can adjust our policies accordingly.
 
 Thank you for your time—I appreciate your guidance to ensure our permissions remain consistent and secure.
