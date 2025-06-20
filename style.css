@@ -1,9 +1,28 @@
+1. Cases:
 
-We can host the database container in your personal LVM, which will give you full control to start/stop the container as needed. This option is ideal for your current demo work, as it involves custom plugins for Red Hat Developer Hub (RHDH) and doesn’t require a dedicated environment.
+04156941 (Sev 2): Acknowledged. Please keep me updated on Crill's progress.
 
-If your needs evolve and require a more robust setup, we can migrate the container to the dedicated DB Host for Dev. However, at this stage, hosting it alongside the existing Orion RHDH Dev/Sandbox environments may not be necessary.
+04156949 (Sev 4): Understood. Continue monitoring Red Hat’s response.
 
-Let us know if you’d like to proceed with the LVM option or discuss scaling up in the future.
+2. Friday Calls:
+
+Morning Call: Keep the current time (10:30am ET/8:30am CT). I’ll prioritize attending.
+
+Afternoon Call: Schedule these ad hoc as needed.
+
+3. Migration Status:
+
+Progress: Successfully deployed in DEV. Preparing the first release for UAT/PROD.
+
+Current Focus: Stress testing.
+
+Issues: Found some challenges—requesting your support to address these.
+
+4. Escalations:
+
+Yes, please escalate the following three Red Hat cases (provide case numbers if available).
+
+Thank you for your support—let me know next steps!
 
 
 
