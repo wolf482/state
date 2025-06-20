@@ -1,4 +1,7 @@
-Apologies again for the slow reply—your patience and proactive help are greatly appreciated. Let me know how I can assist further!
+while IFS=': ' read -r key value; do 
+  encoded=$(echo -n "$value" | base64 | tr -d '\n')
+  echo "$key: $encoded"
+done < file.txt > encoded_file.txt
 
 
 
