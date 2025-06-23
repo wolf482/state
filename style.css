@@ -1,15 +1,7 @@
-@Jyotirmay – Thanks for the update. A few concerns after the repave:
+@Jyotirmay Thanks for handling the repave. To help us stabilize the cluster, could you please:
 
-Current State: The cluster has pods in CrashLoopBackOff—likely leftovers or misconfigs. Example pods: [names].
+Verify the repave is fully clean - Confirm no pods are crashing after the process completes
 
-Expectation: A clean "vanilla" cluster should have no crashing workloads post-repave.
+Clean up any remaining issues - Help us identify and remove any stuck/crashed pods from the old deployment
 
-Impact: Crashy pods compete for resources and destabilize core components.
-
-Questions:
-
-Are these crashing pods expected in the base setup? If yes, they need fixes. If no, can we clean them up?
-
-How can we verify stability post-repave in the future?
-
-Let’s align on next steps—happy to sync live if needed.
+Validate cluster health - Ensure core components are stable before handover
