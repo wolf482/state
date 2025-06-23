@@ -1,7 +1,1 @@
-ollowing the recent repave of our 12d OpenShift cluster, I’ve observed several issues indicating that the process may not have completed cleanly. Multiple pods are in a CrashLoopBackOff state, and some critical components appear degraded. This instability could lead to:
-
-Degraded cluster performance (slow API responses, application timeouts)
-
-Potential data inconsistencies (due to failing operators or storage issues)
-
-Increased risk of outages (if core services remain unstable)
+Immediate Feedback to iLab Team – Share detailed findings to improve the repave process
