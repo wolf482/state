@@ -1,7 +1,22 @@
-@Jyotirmay Thanks for handling the repave. To help us stabilize the cluster, could you please:
+Root Cause:
+Users were being prematurely logged out due to short-lived authentication tokens expiring during active sessions.
 
-Verify the repave is fully clean - Confirm no pods are crashing after the process completes
+Solution Implemented:
+Increased the JWT token lifetime in Keycloak authentication settings to maintain stable sessions while preserving security:
 
-Clean up any remaining issues - Help us identify and remove any stuck/crashed pods from the old deployment
+Adjusted Access Token Lifespan from X minutes to Y hours
 
-Validate cluster health - Ensure core components are stable before handover
+Configured Refresh Token Lifespan to Z hours
+
+Verified session persistence matches business requirements
+
+Validation Steps:
+
+Monitor user sessions for 24+ hours
+
+Confirm no unexpected logouts during active use
+
+Verify token expiration timestamps align with new settings
+
+Additional Notes:
+While this resolves the immediate issue, we should schedule a review of optimal token expiration balances between security and usability.
