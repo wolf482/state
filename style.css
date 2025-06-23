@@ -1,22 +1,43 @@
-Root Cause:
-Users were being prematurely logged out due to short-lived authentication tokens expiring during active sessions.
+Issue Summary
+The Red Hat Developer Hub (RHDH) currently lacks support for embedded Python modules such as mkdocs-video, causing compilation failures in TechDocs when attempting to render video media content in Markdown. This limitation affects documentation workflows requiring dynamic multimedia integration.
 
-Solution Implemented:
-Increased the JWT token lifetime in Keycloak authentication settings to maintain stable sessions while preserving security:
+Root Cause Analysis
+RHDH’s default containerized environment restricts the installation of third-party Python modules (e.g., mkdocs-video), leading to build errors.
 
-Adjusted Access Token Lifespan from X minutes to Y hours
+The sole TechDocs component utilizing video content cannot be processed under the current constraints, forcing a fallback to static assets.
 
-Configured Refresh Token Lifespan to Z hours
+Interim Mitigation
+To ensure uninterrupted documentation delivery, the following measures have been implemented:
 
-Verified session persistence matches business requirements
+Persistent Volume Allocation:
 
-Validation Steps:
+Enabled pod-specific persistent volumes to facilitate static asset storage (e.g., images) as a temporary alternative to embedded videos.
 
-Monitor user sessions for 24+ hours
+Ensured backward compatibility with existing TechDocs workflows.
 
-Confirm no unexpected logouts during active use
+Media Content Adaptation:
 
-Verify token expiration timestamps align with new settings
+Replaced video embeds with static images in the Orion documentation, adhering to RHDH’s current capabilities.
 
-Additional Notes:
-While this resolves the immediate issue, we should schedule a review of optimal token expiration balances between security and usability.
+Long-Term Strategic Resolution
+TechDocs CI/CD Pipeline Enhancement:
+
+Evaluate and implement a containerized build process for TechDocs, decoupling from RHDH’s runtime constraints.
+
+Leverage OpenShift Pipelines (Tekton) to pre-render documentation with required dependencies (e.g., mkdocs-video) in an isolated environment.
+
+Upstream Collaboration:
+
+Engage with the Red Hat Open Innovation Labs team to advocate for native support of multimedia plugins in RHDH’s base image.
+
+Technical Impact & Justification
+Risk Mitigation: Persistent volumes ensure data resilience, while static assets maintain usability.
+
+Scalability: Proposed CI/CD integration aligns with GitOps practices, enabling future extensibility for multimedia content.
+
+Compliance: Adheres to Red Hat’s security policies by avoiding ad-hoc module installations in production pods.
+
+Next Steps
+Task Ownership: Orion Sprint 57 team to oversee PV utilization and image-based documentation updates.
+
+Architectural Review: Initiate cross-functional discussion with Platform Engineering to formalize the TechDocs CI/CD roadmap.
