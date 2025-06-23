@@ -1,1 +1,19 @@
-Immediate Feedback to iLab Team – Share detailed findings to improve the repave process
+Thank you for confirming the repave was done as a vanilla OpenShift cluster. However, since the repave, several pods (e.g., [list names if known]) are crashing repeatedly, degrading cluster performance. These issues began immediately after the repave, suggesting they may stem from:
+
+Base components included in the vanilla setup but misconfigured.
+
+Residual artifacts from the repave process.
+
+Key Observations:
+
+CrashLoopBackOff pods (see attached logs/screenshots).
+
+Degraded performance risks long-term instability.
+
+Request:
+
+Could you verify if these crashing pods are required for baseline operations?
+
+If not, can we cleanly remove them? If yes, they need proper configuration.
+
+If the cluster wasn’t fully cleaned, I recommend a remediated repave to avoid recurring issues.
