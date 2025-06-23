@@ -1,60 +1,7 @@
-while IFS=': ' read -r key value; do 
-  encoded=$(echo -n "$value" | base64 | tr -d '\n')
-  echo "$key: $encoded"
-done < file.txt > encoded_file.txt
+ollowing the recent repave of our 12d OpenShift cluster, I’ve observed several issues indicating that the process may not have completed cleanly. Multiple pods are in a CrashLoopBackOff state, and some critical components appear degraded. This instability could lead to:
 
-registry=https://npm.registry.redhat.com
-# For @citi-177398
-@citi-177398:registry=https://registry.npmjs.org/  # Replace with your actual registry URL
-//registry.npmjs.org/:_authToken=your-auth-token-for-citi
+Degraded cluster performance (slow API responses, application timeouts)
 
-# For @redhat
-@redhat:registry=https://registry.redhat.com/  # Example Red Hat registry
-//registry.redhat.com/:_authToken=your-auth-token-for-redhat
+Potential data inconsistencies (due to failing operators or storage issues)
 
-
-If there are no changes, we’ll proceed with mapping the Casbin role app_ecs_dev_users-developer to users in the app_ecs_dev AD group. Otherwise, please share details on the updated approach so we can adjust our policies accordingly.
-
-Thank you for your time—I appreciate your guidance to ensure our permissions remain consistent and secure.
-
-
-Structure: All entries follow p, adminGroup, {resourceType}, {action}, {permission}
- RBAC model
-
-g, bob, app_ecs_dev_users-developer, _
-p, app_ecs_dev_users-developer, dashboard.starredDeveloperStacks, read
-p, app_ecs_dev_users-developer, dashboard.myWorkSpaces, read
-p, app_ecs_dev_users-developer, dashboard.projects.myWork, read
-p, app_ecs_dev_users-developer, dashboard.starredEntities, read
-p, app_ecs_dev_users-developer, dashboard.summary, read
-p, app_ecs_dev_users-developer, catalog.location.create, create
-p, app_ecs_dev_users-developer, selfService.manageSelfServicesTab.read, read
-p, app_ecs_dev_users-developer, catalog.location.read, read
-p, app_ecs_dev_users-developer, catalog.entity.create, create
-                                                              
-p, adminGroup, catalog, entity, create
-p, adminGroup, catalog, entity, read
-p, adminGroup, catalog, location, read
-p, adminGroup, catalog, location, create
-p, adminGroup, selfService, manageSelfServicesTab, read
-p, adminGroup, selfService, requestTableView, read
-p, adminGroup, selfService, changeCpuQuota, update
-p, adminGroup, selfService, changeMemoryQuota, update
-p, adminGroup, selfService, deployServiceMesh, update
-p, adminGroup, selfService, modifyResource, update
-p, adminGroup, selfService, changePodLimit, update
-p, adminGroup, selfService, apearmytest, update
-p, adminGroup, selfService, apearmyEnablement, update
-p, adminGroup, selfService, createAndromedaProject, update
-p, adminGroup, selfService, apeArmyModifyEndTime, update
-p, adminGroup, selfService, modifyUsersToProject, update
-p, adminGroup, selfService, serverLessNetworkPolicy, update
-p, adminGroup, selfService, sourceDestinationNetworkPolicy, update
-p, adminGroup, selfService, pvPvcPreChecks, update
-p, adminGroup, selfService, pvPvcCreation, update
-p, adminGroup, actionList, actionTableData, create
-p, adminGroup, selfService, ecsCluster, update
-p, adminGroup, selfService, redisOperator, update
-p, adminGroup, selfService, reclaimResourceFromBankToExistingProject, update
-p, adminGroup, selfService, reclaimResourceFromBankToBankProject, update
-p, adminGroup, selfService, ocpServiceAccountCreation, update
+Increased risk of outages (if core services remain unstable)
