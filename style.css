@@ -1,9 +1,15 @@
-ppreciate the clean slate repave! 🚀 Noticed a few pods seem to be stuck in a reboot loop since the refresh—likely hitchhikers from the base setup or maybe some leftovers.
+@Jyotirmay – Thanks for the update. A few concerns after the repave:
 
-Quick ask:
+Current State: The cluster has pods in CrashLoopBackOff—likely leftovers or misconfigs. Example pods: [names].
 
-Are these crashy pods ([names]) part of the vanilla package?
+Expectation: A clean "vanilla" cluster should have no crashing workloads post-repave.
 
-If they’re needed, might need a config tweak. If not, we can probably evict them.
+Impact: Crashy pods compete for resources and destabilize core components.
 
-Either way, let’s squash this before it becomes a bigger thing. Happy to hop on a quick call if it helps.
+Questions:
+
+Are these crashing pods expected in the base setup? If yes, they need fixes. If no, can we clean them up?
+
+How can we verify stability post-repave in the future?
+
+Let’s align on next steps—happy to sync live if needed.
