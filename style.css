@@ -1,19 +1,9 @@
-Thank you for confirming the repave was done as a vanilla OpenShift cluster. However, since the repave, several pods (e.g., [list names if known]) are crashing repeatedly, degrading cluster performance. These issues began immediately after the repave, suggesting they may stem from:
+ppreciate the clean slate repave! 🚀 Noticed a few pods seem to be stuck in a reboot loop since the refresh—likely hitchhikers from the base setup or maybe some leftovers.
 
-Base components included in the vanilla setup but misconfigured.
+Quick ask:
 
-Residual artifacts from the repave process.
+Are these crashy pods ([names]) part of the vanilla package?
 
-Key Observations:
+If they’re needed, might need a config tweak. If not, we can probably evict them.
 
-CrashLoopBackOff pods (see attached logs/screenshots).
-
-Degraded performance risks long-term instability.
-
-Request:
-
-Could you verify if these crashing pods are required for baseline operations?
-
-If not, can we cleanly remove them? If yes, they need proper configuration.
-
-If the cluster wasn’t fully cleaned, I recommend a remediated repave to avoid recurring issues.
+Either way, let’s squash this before it becomes a bigger thing. Happy to hop on a quick call if it helps.
