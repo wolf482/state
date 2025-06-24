@@ -1,3 +1,24 @@
+
+
+spec:
+  services:
+    dataIndex:
+      enabled: true
+      persistence:
+        # Disable the operator's default PostgreSQL
+        postgresql:
+          enabled: false  # Critical change!
+        
+        # Point to your external DB
+        externalDatabase:
+          host: "198.278.12.9"  # Replace with real IP
+          port: 1524
+          databaseName: "sonata-flow"
+          secretRef: 
+            name: "rhdh-secret"  # Must contain USER/PASSWORD
+
+
+
 apiVersion: v1
 kind: Service
 metadata:
