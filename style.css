@@ -3,6 +3,21 @@ kind: SonataFlowPlatform
 metadata:
   name: your-platform-name
 spec:
+  services:
+    dataIndex:
+      persistence:
+        postgresql:  # Note the different structure here
+          jdbcUrl: "jdbc:postgresql://<external-db-host>:<port>/<database-name>"
+          username: <username>
+          passwordSecret:
+            name: <secret-name>
+            key: <password-key>
+
+apiVersion: operator.serverless.openshift.io/v1alpha1
+kind: SonataFlowPlatform
+metadata:
+  name: your-platform-name
+spec:
   dataIndex:
     persistence:
       database:
