@@ -1,3 +1,7 @@
+GRANT USAGE ON SCHEMA cds TO citi_pg_app_owner;
+GRANT CREATE ON SCHEMA cds TO citi_pg_app_owner;
+
+
 apiVersion: operator.serverless.openshift.io/v1alpha1
 kind: SonataFlowPlatform
 metadata:
