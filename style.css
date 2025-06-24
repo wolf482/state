@@ -1,1 +1,1 @@
-kubectl get pods --all-namespaces | grep -i "CrashLoopBackOff"
+oc get pods --all-namespaces --field-selector=status.phase=Pending | grep "Init:0/1"
