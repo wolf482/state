@@ -1,4 +1,20 @@
-oc delete subscription logic-operator-rhel8 -n openshift-serverless-logic --force --grace-period=0
+dataindex:
+  enabled: true
+  persistence:
+    migrationConstartUp: false  # Note: This appears to be a typo, should likely be "migrationAtStartUp"
+    postgresql:
+      secretRef:
+        name: rhdh-secret  # Or your new secret name
+        passwordKey: POSTGRES_PASSWORD
+        userKey: POSTGRES_USER
+      serviceRef:
+        databaseName: sonata-flow  # Your custom DB name
+        name: postgres-service  # You may need to create this
+        namespace: sonataflow-infra
+        # Add these for custom host/port:
+        host: 198.278.12.9
+        port: 1524
+
 
 1. Resource Contention
 CPU/Memory Pressure: The repeated crashes and restarts of pods (CrashLoopBackOff) consume additional CPU and memory resources, which could lead to resource starvation for other critical components like the API server or webhooks.
