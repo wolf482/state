@@ -1,1 +1,55 @@
-oc get pods --all-namespaces --field-selector=status.phase=Pending | grep "Init:0/1"
+1. Resource Contention
+CPU/Memory Pressure: The repeated crashes and restarts of pods (CrashLoopBackOff) consume additional CPU and memory resources, which could lead to resource starvation for other critical components like the API server or webhooks.
+
+Increased Load on kubelet: The kubelet on each node has to manage the failed pods, adding unnecessary overhead.
+
+2. API Server Overload
+Excessive API Calls: Each pod crash and restart triggers reconciliation loops in controllers (e.g., Deployment, ReplicaSet), generating a high volume of API requests to the Kubernetes API server.
+
+etcd Performance Impact: The API server relies on etcd for state storage. Frequent pod failures can lead to increased etcd write/read operations, potentially slowing down cluster-wide operations.
+
+3. Webhook Latency or Failures
+Admission Webhook Delays: If the failing pods are part of a webhook service (e.g., a validating/mutating admission controller), their instability could cause:
+
+Timeouts or delays in API requests (e.g., Pod creation, Deployment updates).
+
+Rejected requests if the webhook is unavailable.
+
+Race Conditions: Intermittent webhook availability might lead to inconsistent policy enforcement.
+
+4. Network and Scheduling Overhead
+Increased Network Traffic: Repeated pod restarts may trigger additional network calls (e.g., image pulls, service discovery).
+
+Scheduler Load: The Kubernetes scheduler has to reassign the failing pods repeatedly, increasing its workload.
+
+5. Monitoring and Logging Strain
+Log Spam: Crash-looping pods generate excessive logs, which can overwhelm logging systems (e.g., Fluentd, Loki, Elasticsearch).
+
+Alert Fatigue: If alerts are configured for pod failures, the constant crashes could flood monitoring systems (e.g., Prometheus, Alertmanager).
+
+Recommended Actions
+Debug Pod Failures:
+
+Check logs of the failing pods (kubectl logs <pod-name> --previous).
+
+Verify resource limits and readiness/liveness probes.
+
+Look for misconfigurations in the scanner and ecs-rhacs-secure deployments.
+
+Adjust Resource Allocation:
+
+Increase CPU/memory limits if the pods are being OOM-killed.
+
+Optimize or disable unnecessary probes if they are causing restarts.
+
+Scale Down Problematic Workloads:
+
+Temporarily reduce replica counts for the affected deployments to minimize impact.
+
+Monitor API Server Metrics:
+
+Watch for high latency or error rates in kube-apiserver metrics (e.g., apiserver_request_duration_seconds).
+
+Check for Cluster-Level Issues:
+
+Ensure etcd and control plane components are healthy (kubectl get componentstatuses).
