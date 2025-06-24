@@ -1,3 +1,5 @@
+oc delete subscription logic-operator-rhel8 -n openshift-serverless-logic --force --grace-period=0
+
 1. Resource Contention
 CPU/Memory Pressure: The repeated crashes and restarts of pods (CrashLoopBackOff) consume additional CPU and memory resources, which could lead to resource starvation for other critical components like the API server or webhooks.
 
