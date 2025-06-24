@@ -1,43 +1,44 @@
-Issue Summary
-The Red Hat Developer Hub (RHDH) currently lacks support for embedded Python modules such as mkdocs-video, causing compilation failures in TechDocs when attempting to render video media content in Markdown. This limitation affects documentation workflows requiring dynamic multimedia integration.
+Subject: Session Expiration Handling Issue in Red Hat Developer Hub (RHUB) 1.5
 
-Root Cause Analysis
-RHDH’s default containerized environment restricts the installation of third-party Python modules (e.g., mkdocs-video), leading to build errors.
+Product: Red Hat Developer Hub (RHUB)
+Version: 1.5
 
-The sole TechDocs component utilizing video content cannot be processed under the current constraints, forcing a fallback to static assets.
+Issue Description:
+When a user is logged into Red Hat Developer Hub (RHUB) and the session token expires, the following problems occur:
 
-Interim Mitigation
-To ensure uninterrupted documentation delivery, the following measures have been implemented:
+No Pre-Expiration Warning:
 
-Persistent Volume Allocation:
+There is no alert or notification to inform the user that their session is about to expire due to inactivity.
 
-Enabled pod-specific persistent volumes to facilitate static asset storage (e.g., images) as a temporary alternative to embedded videos.
+No Redirect on Session Expiration:
 
-Ensured backward compatibility with existing TechDocs workflows.
+After the session expires (due to inactivity), the user is not automatically redirected to the login page. Instead, the UI displays an error on the main page without proper handling.
 
-Media Content Adaptation:
+Error Displayed:
 
-Replaced video embeds with static images in the Orion documentation, adhering to RHDH’s current capabilities.
+The error observed is: "Failed to load entity kinds" (see attached screenshot). This is misleading and does not indicate session expiration, leading to a poor user experience.
 
-Long-Term Strategic Resolution
-TechDocs CI/CD Pipeline Enhancement:
+Expected Behavior:
 
-Evaluate and implement a containerized build process for TechDocs, decoupling from RHDH’s runtime constraints.
+Users should receive a warning (e.g., a pop-up or notification) before session expiration.
 
-Leverage OpenShift Pipelines (Tekton) to pre-render documentation with required dependencies (e.g., mkdocs-video) in an isolated environment.
+Upon token/session expiration, users should be redirected to the login page for re-authentication.
 
-Upstream Collaboration:
+Errors related to session expiry should be user-friendly and actionable.
 
-Engage with the Red Hat Open Innovation Labs team to advocate for native support of multimedia plugins in RHDH’s base image.
+Steps to Reproduce:
 
-Technical Impact & Justification
-Risk Mitigation: Persistent volumes ensure data resilience, while static assets maintain usability.
+Log in to RHUB 1.5.
 
-Scalability: Proposed CI/CD integration aligns with GitOps practices, enabling future extensibility for multimedia content.
+Remain inactive until the session token expires.
 
-Compliance: Adheres to Red Hat’s security policies by avoiding ad-hoc module installations in production pods.
+Observe the lack of pre-expiration warnings.
 
-Next Steps
-Task Ownership: Orion Sprint 57 team to oversee PV utilization and image-based documentation updates.
+After expiration, note the error on the main page instead of a redirect to login.
 
-Architectural Review: Initiate cross-functional discussion with Platform Engineering to formalize the TechDocs CI/CD roadmap.
+Attachments:
+
+Screenshot of the error ("Failed to load entity kinds") after session expiration.
+
+Request:
+Please assist in resolving this issue or provide guidance on configuring session management (e.g., timeout alerts, redirects) in RHUB 1.5.
