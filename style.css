@@ -1,44 +1,31 @@
-Subject: Session Expiration Handling Issue in Red Hat Developer Hub (RHUB) 1.5
+1. Describe the impact to you or the business
+Response (4000-character limit):
+"This issue significantly impacts user productivity and system usability. When sessions expire without warning, users lose unsaved work or face confusion due to unclear error messages (e.g., 'Failed to load entity kinds'). This leads to repeated login attempts, increased support requests, and disrupted workflows. From a business perspective, the lack of proper session management affects compliance with security best practices (e.g., session timeout policies) and creates a poor user experience, potentially delaying critical development tasks. There is no immediate legal/medical urgency, but resolving this is a priority for maintaining operational efficiency."
+
+2. In what environment are you experiencing this behavior?
+Response (3000-character limit):
+*"Environment Details:
 
 Product: Red Hat Developer Hub (RHUB)
+
 Version: 1.5
 
-Issue Description:
-When a user is logged into Red Hat Developer Hub (RHUB) and the session token expires, the following problems occur:
+Deployment: [Specify if on-premise, OpenShift, etc.]
 
-No Pre-Expiration Warning:
+Browser: [e.g., Chrome vXX, Firefox vXX]
 
-There is no alert or notification to inform the user that their session is about to expire due to inactivity.
+OS: [e.g., RHEL 8.x, Windows 10]
 
-No Redirect on Session Expiration:
+Authentication: [e.g., Keycloak, OAuth]
 
-After the session expires (due to inactivity), the user is not automatically redirected to the login page. Instead, the UI displays an error on the main page without proper handling.
+The issue occurs consistently across all tested environments when users remain inactive beyond the session timeout period. Session expiration is configured to [X minutes/hours], but no alerts or redirects are triggered."*
 
-Error Displayed:
+3. How frequently does this behavior occur?
+Response:
+*"This issue occurs repeatedly and predictably:
 
-The error observed is: "Failed to load entity kinds" (see attached screenshot). This is misleading and does not indicate session expiration, leading to a poor user experience.
+Frequency: Every time a user’s session expires due to inactivity.
 
-Expected Behavior:
+Repro Steps: Log in → remain idle for the session duration → observe error without warning/redirect.
 
-Users should receive a warning (e.g., a pop-up or notification) before session expiration.
-
-Upon token/session expiration, users should be redirected to the login page for re-authentication.
-
-Errors related to session expiry should be user-friendly and actionable.
-
-Steps to Reproduce:
-
-Log in to RHUB 1.5.
-
-Remain inactive until the session token expires.
-
-Observe the lack of pre-expiration warnings.
-
-After expiration, note the error on the main page instead of a redirect to login.
-
-Attachments:
-
-Screenshot of the error ("Failed to load entity kinds") after session expiration.
-
-Request:
-Please assist in resolving this issue or provide guidance on configuring session management (e.g., timeout alerts, redirects) in RHUB 1.5.
+Pattern: Not tied to specific times but depends on inactivity. Affects all users with active sessions."*
