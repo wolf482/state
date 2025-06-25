@@ -1,3 +1,9 @@
+Hey Josh,
+
+We need the DAGs refreshed to pull data for user, group, and user_sa in the new DB instance OROIN_OCP. I’ve already dumped the user and group data from dev as a temporary fix.
+
+Once that’s done, give us a heads-up so we can restart and test logins for a few users. Also, any ETA on including this new DB in the DAGs?
+
 GRANT USAGE ON SCHEMA cds TO citi_pg_app_owner;
 GRANT CREATE ON SCHEMA cds TO citi_pg_app_owner;
 
