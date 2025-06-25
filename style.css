@@ -1,6 +1,9 @@
 GRANT USAGE ON SCHEMA cds TO citi_pg_app_owner;
 GRANT CREATE ON SCHEMA cds TO citi_pg_app_owner;
 
+GRANT ALL PRIVILEGES ON DATABASE sonataflow TO your_username;
+GRANT CREATE ON DATABASE sonataflow TO your_username;
+
 
 apiVersion: operator.serverless.openshift.io/v1alpha1
 kind: SonataFlowPlatform
