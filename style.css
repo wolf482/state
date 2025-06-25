@@ -1,3 +1,34 @@
+Hi Arun,
+
+I’ve completed the iLab setup for ISRP certification, and to ensure the ISDP documentation aligns with Citi’s requirements, I’m sharing the following Red Hat references that detail the correct processes for Orchestrator and ServerLogic Operator:
+
+[Link 1: RHDH 1.5 Official Documentation]
+
+[Link 2: Orchestrator Setup Guide] (add actual links)
+
+Key Gaps to Address in the ISDP Document:
+
+Incomplete Sections: The current draft copies generic steps from RHDH without adapting them to our iLab environment or certification needs.
+
+Missing Validations: No evidence of cross-checking against the actual setup (e.g., server logic configurations, error handling).
+
+Action Required: Please revise the document by <insert deadline> with:
+
+Verified steps from the Red Hat links above.
+
+Screenshots/logs from iLab to confirm functionality.
+
+Clear annotations where our setup diverges from standard RHDH.
+
+This is critical for certification, and I’d appreciate your confirmation that you’ll prioritize this. If there are blockers, let’s discuss today.
+
+
+
+
+
+
+
+
 
 I hope this email finds you well.
 
