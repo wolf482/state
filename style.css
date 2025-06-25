@@ -1,3 +1,61 @@
+ed Hat Documentation for ISDP Sections
+3.1 Component List & Interaction Diagram
+https://docs.openshift.com/container-platform/4.12/serverless/logic/serverless-logic-architecture.html
+
+3.2 Network Topology Diagram
+https://docs.openshift.com/container-platform/4.12/networking/network_traffic/serverless-logic-network.html
+
+3.3 Operating System Requirements
+https://docs.openshift.com/container-platform/4.12/serverless/installing_serverless/logic/prerequisites.html
+
+3.4 Communication
+https://docs.openshift.com/container-platform/4.12/serverless/logic/serverless-logic-communication.html
+
+3.5 API Functionality
+https://docs.openshift.com/container-platform/4.12/rest_api/serverless_logic_apis.html
+
+3.6 Authentication Methods
+3.6.1 Entry Points: https://docs.openshift.com/container-platform/4.12/authentication/serverless-logic-auth.html
+
+3.6.2 Peer Systems: https://docs.openshift.com/container-platform/4.12/security/service_accounts.html
+
+3.7 User Types and Roles
+3.7.1 Users: https://docs.openshift.com/container-platform/4.12/authentication/rbac.html
+
+3.7.2 Functional IDs: https://docs.openshift.com/container-platform/4.12/authentication/service_accounts.html
+
+3.7.3 Operations Guide: https://docs.openshift.com/container-platform/4.12/serverless/logic/serverless-logic-operations.html
+
+3.8 Data Protection
+3.8.1 Crypto Algorithms: https://docs.openshift.com/container-platform/4.12/security/encryption.html
+
+3.8.2 Key Management: https://docs.openshift.com/container-platform/4.12/security/certificates.html
+
+3.8.3 Data Storage: https://docs.openshift.com/container-platform/4.12/storage/persistent_storage.html
+
+3.9 Audit Trails
+https://docs.openshift.com/container-platform/4.12/security/audit-logging.html
+
+4. Integration to Citi Systems
+https://docs.openshift.com/container-platform/4.12/serverless/logic/serverless-logic-integrations.html
+
+5. Roadmap for Emerging Technologies
+https://access.redhat.com/roadmaps/openshift
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Hi Arun,
 
 I’ve completed the iLab setup for ISRP certification, and to ensure the ISDP documentation aligns with Citi’s requirements, I’m sharing the following Red Hat references that detail the correct processes for Orchestrator and ServerLogic Operator:
