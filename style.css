@@ -1,3 +1,20 @@
+
+I hope this email finds you well.
+
+I’ve completed the setup of the iLab environment for the ISRP certification, and as discussed, the next critical step is ensuring the ISDP documentation is accurate and thoroughly reviewed. Upon going through the documents you shared earlier, I noticed several sections that appear to be copied directly from RHDH without further investigation or contextual adjustments for the Orchestrator and ServerLogic Operator components.
+
+To ensure the documentation meets Citi’s certification standards, I’d like to request the following:
+
+Detailed Review: Revisit the ISDP document to verify all technical steps, especially those specific to Orchestrator and ServerLogic Operator, are accurately documented (not just copied).
+
+Gaps Investigation: Address any unclear or missing sections—particularly where the setup diverges from RHDH.
+
+Timeline: Provide an updated version by [insert deadline, e.g., Friday, EOD] so we can proceed without delays.
+
+Given the tight timeline for certification, your proactive attention to this will be highly appreciated. Let me know if you need any clarifications from my side regarding the iLab setup to assist with the documentation.
+
+
+
 Hey Josh,
 
 We need the DAGs refreshed to pull data for user, group, and user_sa in the new DB instance OROIN_OCP. I’ve already dumped the user and group data from dev as a temporary fix.
