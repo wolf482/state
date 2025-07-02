@@ -1,12 +1,84 @@
-Hi Mohammed,
+Sonata Workflow Serverless Test Case Agenda
+Objective: Validate end-to-end workflow creation and execution in SonataPlatform using serverless logic operators.
 
-Thank you for reaching out. I’d be happy to assist with developing the test cases for the serverless logic. While I’m currently juggling a few tasks, I’ll prioritize this to ensure we stay on track.
+1. Environment Setup
+1.1 Access Sonata Infrastructure
 
-To get started, I’ll coordinate with Brian to align on testing requirements and timelines. Brian, could we set up a quick sync to discuss the scope, priorities, and any existing test frameworks we can leverage? Let me know your availability over the next few days.
+Verify access to sonatainfranamespace with appropriate permissions
 
-Mohammed, please feel free to share any additional context or expectations you’d like us to consider.
+Confirm SonataPlatform CLI/API tools are installed
 
-Looking forward to progressing on this!
+1.2 Initialize SonataPlatform
 
-Best regards,
-[Your Name]
+bash
+sonata-cli platform init --namespace sonatainfranamespace --name test-platform
+Verify platform status:
+
+bash
+sonata-cli platform status
+2. Workflow Creation
+2.1 Define Workflow (YAML Example)
+Create test-workflow.yaml:
+
+yaml
+name: serverless-demo
+triggers:
+  - type: api
+    name: manual-trigger
+steps:
+  - name: step1
+    action: serverless-operator
+    inputs:
+      function: "example-function"
+      payload: {"test": "data"}
+2.2 Deploy Workflow
+
+bash
+sonata-cli workflow deploy -f test-workflow.yaml
+Verify deployment:
+
+bash
+sonata-cli workflow list
+3. Trigger Workflow via API
+3.1 Get Workflow API Endpoint
+
+bash
+sonata-cli workflow info serverless-demo --endpoints
+3.2 Trigger via cURL
+
+bash
+curl -X POST https://<SONATA_API_ENDPOINT>/trigger \
+  -H "Authorization: Bearer <TOKEN>" \
+  -d '{"workflow": "serverless-demo"}'
+Expected Response: 202 Accepted with execution ID.
+
+4. Validation
+4.1 Check Execution Logs
+
+bash
+sonata-cli workflow logs serverless-demo --execution <ID>
+Verify:
+
+Serverless operator invoked
+
+Payload processed correctly
+
+4.2 Cleanup
+
+bash
+sonata-cli workflow delete serverless-demo
+sonata-cli platform delete test-platform
+5. Time Allocation (Estimate)
+Task	Duration
+Environment Setup	15 min
+Workflow Creation	20 min
+API Trigger & Validation	15 min
+Total	50 min
+6. Success Criteria
+Workflow deploys without errors
+
+API trigger returns valid execution ID
+
+Serverless operator logs show expected payload processing
+
+Let me know if you'd like to adjust any steps or add specific assertions!
