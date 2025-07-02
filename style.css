@@ -1,120 +1,15 @@
-Agenda: Sonata Workflow Serverless Test on OpenShift
-Objective:
+Subject: Clarification on CVS Reports and Future Plans for Orchestrator Operator and RHDH Operator
 
-Install the Serverless Logic Operator from a CatalogSource.
+Dear Susan and Daniel,
 
-Deploy a Sonata cluster/platform.
+I hope this email finds you well.
 
-Create and trigger a "Hello World" workflow via Sonata API.
+We’re reaching out to better understand the relationship between the Orchestrator Operator and the Red Hat Developer Hub (RHDH) Operator in terms of their CVS (Common Vulnerability Scoring) reports. Specifically, we’d like to confirm:
 
-1. Prerequisites
-OpenShift Cluster (4.8+) with cluster-admin access.
+Are both operators currently following the same CVS reporting framework, or are they managed under different systems?
 
-oc CLI logged in.
+Could you share any insights into the future roadmap for the Orchestrator Operator—particularly whether there are plans to integrate it as part of the RHDH plugins or operator in upcoming releases?
 
-Access to the CatalogSource containing the Serverless Logic Operator.
+As Daniel (Business Manager) and Susan (Red Hat Support) are key stakeholders here, your perspectives would be invaluable to align our internal planning and strategy.
 
-2. Install Serverless Logic Operator
-2.1 Add CatalogSource
-bash
-oc apply -f - <<EOF
-apiVersion: operators.coreos.com/v1alpha1
-kind: CatalogSource
-metadata:
-  name: sonata-serverless-catalog
-  namespace: openshift-marketplace
-spec:
-  sourceType: grpc
-  image: <YOUR_CATALOG_IMAGE>  # e.g., quay.io/sonata/serverless-operator-catalog:latest
-  displayName: Sonata Serverless Logic Operator
-EOF
-2.2 Create Operator Subscription
-bash
-oc apply -f - <<EOF
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: sonata-serverless-operator
-  namespace: openshift-operators
-spec:
-  channel: stable
-  name: serverless-logic-operator
-  source: sonata-serverless-catalog
-  sourceNamespace: openshift-marketplace
-EOF
-2.3 Verify Installation
-bash
-oc get pods -n openshift-operators | grep "serverless-logic-operator"
-oc api-resources | grep "sonata"  # Verify CRDs
-3. Deploy Sonata Platform
-3.1 Create Sonata Namespace
-bash
-oc new-project sonatainfra
-3.2 Deploy SonataPlatform CR
-bash
-oc apply -f - <<EOF
-apiVersion: sonata.platform/v1alpha1
-kind: SonataPlatform
-metadata:
-  name: sonata-test-platform
-  namespace: sonatainfra
-spec:
-  serverlessEnabled: true
-  workflowStorage:
-    size: 1Gi
-EOF
-3.3 Verify Platform Status
-bash
-oc get sonataplatform -n sonatainfra
-oc get pods -n sonatainfra  # Wait for all pods to be 'Running'
-4. Deploy "Hello World" Workflow
-4.1 Create Workflow YAML (hello-world-workflow.yaml)
-yaml
-apiVersion: sonata.workflow/v1
-kind: Workflow
-metadata:
-  name: hello-world
-  namespace: sonatainfra
-spec:
-  triggers:
-    - type: api
-      name: manual-trigger
-  steps:
-    - name: print-hello
-      action: serverless-operator
-      inputs:
-        function: "hello-world"
-        payload: {"message": "Hello from Sonata!"}
-4.2 Deploy Workflow
-bash
-oc apply -f hello-world-workflow.yaml
-4.3 Verify Workflow
-bash
-oc get workflows -n sonatainfra
-5. Trigger Workflow via Sonata API
-5.1 Get API Route
-bash
-SONATA_API=$(oc get route sonata-api -n sonatainfra -o jsonpath='{.spec.host}')
-echo "API Endpoint: https://$SONATA_API/trigger"
-5.2 Trigger with cURL
-bash
-curl -X POST "https://$SONATA_API/trigger" \
-  -H "Authorization: Bearer $(oc whoami -t)" \
-  -H "Content-Type: application/json" \
-  -d '{"workflow": "hello-world"}'
-Expected Response:
-
-json
-{"status": "triggered", "executionId": "1234-abcd"}
-5.3 Check Logs
-bash
-oc logs -l app=sonata-workflow-engine -n sonatainfra --tail=50
-Expected Log:
-"Hello from Sonata!"
-
-6. Cleanup
-bash
-oc delete workflow hello-world -n sonatainfra
-oc delete sonataplatform sonata-test-platform -n sonatainfra
-oc delete subscription sonata-serverless-operator -n openshift-operators
-oc delete catalogsource sonata-serverless-catalog -n openshift-marketplace
+Thank you in advance for your time and expertise. We’re happy to schedule a brief discussion if that would be helpful to dive deeper into these questions.
