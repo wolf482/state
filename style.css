@@ -1,12 +1,12 @@
-spec:
-  template:
-    spec:
-      volumes:
-        - name: vault-secrets
-          emptyDir: {}
-      containers:
-        - name: keycloak
-          volumeMounts:
-            - name: vault-secrets
-              mountPath: /vault/secrets
-              readOnly: true
+Hi Mohammed,
+
+Thank you for reaching out. I’d be happy to assist with developing the test cases for the serverless logic. While I’m currently juggling a few tasks, I’ll prioritize this to ensure we stay on track.
+
+To get started, I’ll coordinate with Brian to align on testing requirements and timelines. Brian, could we set up a quick sync to discuss the scope, priorities, and any existing test frameworks we can leverage? Let me know your availability over the next few days.
+
+Mohammed, please feel free to share any additional context or expectations you’d like us to consider.
+
+Looking forward to progressing on this!
+
+Best regards,
+[Your Name]
