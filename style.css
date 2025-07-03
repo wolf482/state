@@ -1,16 +1,33 @@
-# OpenShift Serverless Workflow Deployment
-
-This project deploys a serverless workflow application on OpenShift using the Red Hat OpenShift Serverless Logic Operator.
-
-## Prerequisites
-
-- OpenShift Serverless 1.35.0
-- Red Hat OpenShift Serverless Logic Operator 1.35.0
-- OpenShift CLI (`oc`) installed and configured
-
-## Deployment Steps
-
-### 1. Create Namespace
-```bash
-oc create project cti-svcs-sonata-infra-177398
-oc project cti-svcs-sonata-infra-177398
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                              User Interaction                                 │
+└───────────────────────┬───────────────────────────────────────────────────────┘
+                        │
+                        │ 1. Trigger workflow via curl
+                        ▼
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                            OpenShift Cluster                                  │
+├───────────────────────┬───────────────────────────────────────────────────────┤
+│                       │                                                       │
+│  ┌─────────────────┐  │ 2. POST /greeting                                     │
+│  │  SonataWorkflow │◀─┴───────────────────────────────────────────────────────┘
+│  └────────┬────────┘
+│           │ 3. Process workflow (Spanish → English)
+│           │
+│  ┌───────▼───────┐    ┌─────────────────┐
+│  │ SonataData    │    │ SonataJobs      │
+│  │ Index         ◀────┤                 │
+│  └───────┬───────┘    └─────────────────┘
+│          │ 4. Store/retrieve translation data
+│          │
+│  ┌───────▼───────┐
+│  │ Response      │
+│  │ (English)     │
+│  └───────┬───────┘
+│          │ 5. Return translated response
+└──────────┼─────────────────────────────────────────────────────────────────────┘
+           │
+           ▼
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                              User Receives                                    │
+│                         English Translation                                   │
+└───────────────────────────────────────────────────────────────────────────────┘
