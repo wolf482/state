@@ -1,7 +1,16 @@
-curl -X POST \
-  http://sonataflow-platform-data-index-service.sonataflow-infra/greeting \
-  -H "Content-Type: application/json" \
-  -d '{
-    "language": "English",
-    "name": "John"
-  }'
+# OpenShift Serverless Workflow Deployment
+
+This project deploys a serverless workflow application on OpenShift using the Red Hat OpenShift Serverless Logic Operator.
+
+## Prerequisites
+
+- OpenShift Serverless 1.35.0
+- Red Hat OpenShift Serverless Logic Operator 1.35.0
+- OpenShift CLI (`oc`) installed and configured
+
+## Deployment Steps
+
+### 1. Create Namespace
+```bash
+oc create project cti-svcs-sonata-infra-177398
+oc project cti-svcs-sonata-infra-177398
