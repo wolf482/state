@@ -1,3 +1,11 @@
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO citi_pg_app_owner;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO citi_pg_app_owner;
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO citi_pg_app_owner;
+Efficiency & Agility: Currently, only Offshore has access to this group, which creates delays when I need visibility or permissions to troubleshoot migration-related tasks. Having temporary access will allow me to:
+
+Quickly verify configurations or logs during migration.
+
+Resolve issues without dependency bottlenecks.
+
+Ensure smoother coordination between teams.
+
+Risk Mitigation: The access will be strictly limited to the UAT migration timeline ([dates if known]). I propose removing my access immediately after migration completion to maintain security compliance.
+
+Alignment with Project Needs: This aligns with our goal of a seamless migration—reducing back-and-forth communication and accelerating issue resolution.
