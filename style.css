@@ -1,14 +1,4 @@
-apiVersion: k8s.keycloak.org/v2alpha1
-kind: Keycloak
-metadata:
-  name: rhdh-kcv
-  namespace: cti-svcs-orion-177398
-spec:
-  db:
-    url: "jdbc:postgresql://10.19.237.9:1524/rhdh_dev?currentSchema=keycloak&user=app_orion_pgsql_dev&password=a0kmGbe8c0&sslmode=prefer"
-    vendor: postgres
-  hostname:
-    hostname: kcv-cti-svcs-orion-177398.apps.namangtd001d.ecs.dyn.nsroot.net
+spec:  
   ingress:
     enabled: true
     className: openshift-default
