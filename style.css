@@ -1,15 +1,33 @@
-Subject: Clarification on CVS Reports and Future Plans for Orchestrator Operator and RHDH Operator
-
-Dear Susan and Daniel,
-
-I hope this email finds you well.
-
-We’re reaching out to better understand the relationship between the Orchestrator Operator and the Red Hat Developer Hub (RHDH) Operator in terms of their CVS (Common Vulnerability Scoring) reports. Specifically, we’d like to confirm:
-
-Are both operators currently following the same CVS reporting framework, or are they managed under different systems?
-
-Could you share any insights into the future roadmap for the Orchestrator Operator—particularly whether there are plans to integrate it as part of the RHDH plugins or operator in upcoming releases?
-
-As Daniel (Business Manager) and Susan (Red Hat Support) are key stakeholders here, your perspectives would be invaluable to align our internal planning and strategy.
-
-Thank you in advance for your time and expertise. We’re happy to schedule a brief discussion if that would be helpful to dive deeper into these questions.
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: rhdh-kcv
+  namespace: cti-svcs-orion-177398
+spec:
+  db:
+    url: "jdbc:postgresql://10.19.237.9:1524/rhdh_dev?currentSchema=keycloak&user=app_orion_pgsql_dev&password=a0kmGbe8c0&sslmode=prefer"
+    vendor: postgres
+  hostname:
+    hostname: kcv-cti-svcs-orion-177398.apps.namangtd001d.ecs.dyn.nsroot.net
+  ingress:
+    enabled: true
+    className: openshift-default
+    tls: true
+    annotations:
+      route.openshift.io/termination: "edge"
+      # Additional recommended annotations:
+      haproxy.router.openshift.io/disable_http2: "true"
+  instances: 1
+  # Properly formatted extraEnv section:
+  extraEnv: |
+    - name: KC_PROXY
+      value: "edge"
+    - name: KC_HOSTNAME_STRICT_HTTPS
+      value: "false"
+    - name: KC_HTTP_ENABLED
+      value: "true"
+    - name: KC_HOSTNAME_STRICT_BACKCHANNEL
+      value: "false"
+    # Required for OpenShift edge termination:
+    - name: KC_PROXY_ADDRESS_FORWARDING
+      value: "true"
