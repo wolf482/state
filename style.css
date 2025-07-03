@@ -1,33 +1,13 @@
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                              User Interaction                                 │
-└───────────────────────┬───────────────────────────────────────────────────────┘
-                        │
-                        │ 1. Trigger workflow via curl
-                        ▼
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                            OpenShift Cluster                                  │
-├───────────────────────┬───────────────────────────────────────────────────────┤
-│                       │                                                       │
-│  ┌─────────────────┐  │ 2. POST /greeting                                     │
-│  │  SonataWorkflow │◀─┴───────────────────────────────────────────────────────┘
-│  └────────┬────────┘
-│           │ 3. Process workflow (Spanish → English)
-│           │
-│  ┌───────▼───────┐    ┌─────────────────┐
-│  │ SonataData    │    │ SonataJobs      │
-│  │ Index         ◀────┤                 │
-│  └───────┬───────┘    └─────────────────┘
-│          │ 4. Store/retrieve translation data
-│          │
-│  ┌───────▼───────┐
-│  │ Response      │
-│  │ (English)     │
-│  └───────┬───────┘
-│          │ 5. Return translated response
-└──────────┼─────────────────────────────────────────────────────────────────────┘
-           │
-           ▼
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                              User Receives                                    │
-│                         English Translation                                   │
-└───────────────────────────────────────────────────────────────────────────────┘
+Hi Brian,
+
+I noticed you weren’t able to make the meeting time I proposed earlier. I completely understand schedules can get hectic!
+
+Would any of these alternative times work for you?
+
+Option 1: [Date + Time]
+
+Option 2: [Date + Time]
+
+Option 3: [Flexible suggestion, e.g., “Or I’m happy to find a time that suits you better.”]
+
+If none of these work, please let me know what works best for your calendar—I’m happy to accommodate. Looking forward to connecting!
