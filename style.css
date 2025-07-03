@@ -1,20 +1,7 @@
-Hi Team,
-
-I’ve deployed the new product to UAT as part of the migration I’m leading. Given the long weekend, I’ve included a few team members to assist with monitoring during the deployment.
-
-Next Steps:
-
-The RHDH secrets have been pushed to UAT.
-
-If needed, you can upgrade the annotations to start using the new secrets.
-
-Status Update:
-
-The platform looks good so far for RHDH (tested).
-
-We’re on an aggressive timeline, so please let me know if you encounter any issues.
-
-I’ll post an update once the upgrade is complete. Thanks for your support!
-
-
-Mock exercise / Dry run – For rehearsals
+curl -X POST \
+  http://sonataflow-platform-data-index-service.sonataflow-infra/greeting \
+  -H "Content-Type: application/json" \
+  -d '{
+    "language": "English",
+    "name": "John"
+  }'
