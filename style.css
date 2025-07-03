@@ -1,15 +1,10 @@
-As a quick update, I’ve created a repo with an automated setup script and detailed README.md to streamline testing for the [Workflow Use Case]. Access has been granted to all stakeholders, including Brian.
+Hi [Recipient's Name],
 
-For visibility:
+Thank you for your question regarding the requirements for deploying a serverless application. As outlined in the documentation, the primary requirement is the NetworkPolicy allow-from-openshift-serverless to ensure proper connectivity. Beyond this, no additional configurations are needed for the deployment itself.
 
-Repo Link: [Insert URL]
+For further clarity, I’ve shared the Bitbucket repository link with you, which includes a detailed README outlining the setup process for the serverless use case. You should now have access to the repo—please let me know if you encounter any issues accessing it or if you have further questions.
 
-Key Features:
+Looking forward to your feedback.
 
-One-click environment setup
-
-Pre-configured workflow examples
-
-Troubleshooting guide
-
-Brian, since you declined the earlier meeting invite, I wanted to flag this resource in case it helps you explore the workflow independently. Happy to walk you through it if needed!
+Best regards,
+[Your Name]
