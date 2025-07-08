@@ -1,10 +1,17 @@
-Hi [Recipient's Name],
+Dear Rajesh,
 
-Thank you for your question regarding the requirements for deploying a serverless application. As outlined in the documentation, the primary requirement is the NetworkPolicy allow-from-openshift-serverless to ensure proper connectivity. Beyond this, no additional configurations are needed for the deployment itself.
+I hope this email finds you well. I’d like to formally inform you of my upcoming vacation from July 15 to August 15, 2025. As we’re in the middle of the migration, I’ve ensured the following backup coverage to minimize disruptions:
 
-For further clarity, I’ve shared the Bitbucket repository link with you, which includes a detailed README outlining the setup process for the serverless use case. You should now have access to the repo—please let me know if you encounter any issues accessing it or if you have further questions.
+Orchestrator: Mohamed will handle my responsibilities.
 
-Looking forward to your feedback.
+RHDH Migration: Arun will be the primary backup, with Rajeshdree and Bippin as additional supports.
+
+Keycloak: Joshoua will oversee these tasks in my absence.
+
+I’ll ensure all pending work is documented and transitioned smoothly before my leave. For urgent matters, Mohamed (cc’d) will be the point of contact, with Arun and Joshoua supporting their respective areas.
+
+I appreciate your understanding and want to reiterate my commitment to this project. That said, I’ll be fully offline during my leave to recharge, and I trust the team to manage in my absence. I’ll reconnect on my return to ensure a seamless transition back.
 
 Best regards,
-[Your Name]
+[Your Full Name]
+Platform Lead
