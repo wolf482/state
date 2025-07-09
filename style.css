@@ -1,10 +1,4 @@
-Understood—if you’re coordinating with your manager to confirm the next steps, please let me know once you have clarification on:
-
-Ticket ownership (which team should handle it).
-
-Scope of the ticket (e.g., updating the report’s data source vs. validating our evidence).
-
-For reference, our team has already remediated the issue (attached), so the remaining task appears to be aligning the report with the current state. I’m happy to provide additional details or loop in other stakeholders if needed.
-
-Thanks for your help navigating this!
-
+curl -v \
+  --cacert <(echo "$CITI_CA_CHAIN_PEM") \
+  --key <(echo "$ORION_TLS_KAFKA_DEV_KEY") \
+  --cert <(echo "$ORION_TLS_KAFKA_DEV_CERT_PEM") \
