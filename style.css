@@ -24,3 +24,9 @@ args:
     chmod +x /vault/secrets/secret.sh
     source /vault/secrets/secret.sh
     exec kc.sh --verbose start
+
+
+
+      env:
+      - name: JGROUPS_DNS_QUERY
+        value: rhdh-kcv-discovery.cti-svcs-orion-177398
