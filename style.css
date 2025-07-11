@@ -9,3 +9,10 @@ oc get mutatingwebhookconfiguration vault-agent-injector-cfg -o jsonpath='{.webh
 
 
 openssl x509 -in ca.crt -text -noout
+
+
+# Step 1: Get the CA cert from the injector's secret (adjust secret name if needed)
+oc get secret -n vault-agent-injector vault-agent-injector-tls -o jsonpath='{.data.ca\.crt}' | base64 --decode > new-ca.crt
+
+# Step 2: Update the MutatingWebhookConfiguration
+oc patch mutatingwebhookconfiguration vault-agent-injector-cfg --type='json' -p='[{"op": "replace", "path": "/webhooks/0/clientConfig/caBundle", "value": "'$(base64 -w0 < new-ca.crt)'"}]'
