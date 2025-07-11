@@ -1,23 +1,14 @@
-apiVersion: k8s.keycloak.org/v2alpha1
-kind: Keycloak
-metadata:
-  name: rhdh-kcv
-spec:
-  podTemplate:
-    spec:
-      containers:
-      - name: keycloak
-        lifecycle:
-          preStart:
-            exec:
-              command:
+  unsupported:
+    podTemplate:
+      spec:
+        containers:
+          - args:
               - /bin/sh
               - -c
               - |
-                # Make the secret file executable and source it
-                chmod +x /vault/secrets.sh
-                source /vault/secrets.sh
-                echo "Secrets sourced successfully"
-        args:
-        - --verbose
-        - start
+                chmod +x /vault/secrets/secret.sh
+                source /vault/secrets/secret.sh
+                exec kc.sh --verbose start
+            command:
+              - /bin/sh
+              - -c
