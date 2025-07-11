@@ -12,3 +12,15 @@ args:
     chmod +x /vault/secrets/secret.sh
     source /vault/secrets/secret.sh
     exec kc.sh --verbose start
+
+
+
+
+args:
+- /bin/sh
+- -c
+- |
+    export JAVA_OPTS="-Djgroups.dns.query=rhdh-kcv-discovery.ctl-svcs-orion-177398"
+    chmod +x /vault/secrets/secret.sh
+    source /vault/secrets/secret.sh
+    exec kc.sh --verbose start
