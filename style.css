@@ -5,4 +5,8 @@ curl -v \
 
 
 
-Hey Mohamed, since [Offshore Guy] moved offshore, the new platform guy isn’t up to speed on Orion yet. Could you quickly introduce me in the meeting as the SME for Orion in TenanOps? Dinsh and Manas know me, but TenanOps keeps looping in Arun/Bipin for errors—meanwhile, I’m the one actually deep in it. A quick intro now means fewer credibility hurdles later. Appreciate it!
+docker run -d \
+  --name vault-local-inspect \
+  -p 8200:8200 \
+  -v $(pwd)/vault-data:/vault/data \
+   server -dev
