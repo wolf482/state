@@ -1,18 +1,23 @@
-curl -v \
-  --cacert <(echo "$CITI_CA_CHAIN_PEM") \
-  --key <(echo "$ORION_TLS_KAFKA_DEV_KEY") \
-  --cert <(echo "$ORION_TLS_KAFKA_DEV_CERT_PEM") \
-
-
-
-oc get mutatingwebhookconfiguration vault-agent-injector-cfg -o jsonpath='{.webhooks[0].clientConfig.caBundle}' | base64 --decode > ca.crt
-
-
-      initContainers:
-      - name: vault-secrets
-        image: appropriate image
-        command: ["/bin/sh", "-c"]
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: rhdh-kcv
+spec:
+  podTemplate:
+    spec:
+      containers:
+      - name: keycloak
+        lifecycle:
+          preStart:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - |
+                # Make the secret file executable and source it
+                chmod +x /vault/secrets.sh
+                source /vault/secrets.sh
+                echo "Secrets sourced successfully"
         args:
-        - |
-          chmod +x /vault/secrets/secret.sh
-          source /vault/secrets/secret.sh
+        - --verbose
+        - start
