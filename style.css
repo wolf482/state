@@ -5,8 +5,4 @@ curl -v \
 
 
 
-docker run -d \
-  --name vault-local-inspect \
-  -p 8200:8200 \
-  -v $(pwd)/vault-data:/vault/data \
-   server -dev
+oc get mutatingwebhookconfiguration vault-agent-injector-cfg -o jsonpath='{.webhooks[0].clientConfig.caBundle}' | base64 --decode > ca.crt
