@@ -1,14 +1,14 @@
-  unsupported:
-    podTemplate:
-      spec:
-        containers:
-          - args:
-              - /bin/sh
-              - -c
-              - |
-                chmod +x /vault/secrets/secret.sh
-                source /vault/secrets/secret.sh
-                exec kc.sh --verbose start
-            command:
-              - /bin/sh
-              - -c
+args:
+- /bin/sh
+- -c
+- |
+    # Move the operator-injected JVM arg to JAVA_OPTS
+    for arg in "$@"; do
+      if [[ $arg == -Djgroups.dns.query=* ]]; then
+        export JAVA_OPTS="$JAVA_OPTS $arg"
+      fi
+    done
+    
+    chmod +x /vault/secrets/secret.sh
+    source /vault/secrets/secret.sh
+    exec kc.sh --verbose start
