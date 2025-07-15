@@ -1,16 +1,44 @@
-Requested Documentation:
-During the session, the team asked for the following materials, which I’ve compiled and linked below for easy reference:
+Dear [Manager's Name],
 
-[Document Name + Hyperlink]
+As I prepare for my time off starting [start date], I want to ensure full transparency on the current state of the project and mitigate any potential misalignment in my absence. Below is a concise update:
 
-[Document Name + Hyperlink]
+Key Achievements & Current Status:
+Release 001 Successfully Deployed in UAT (Keycloak):
 
-Next Steps:
+Environment is open/running for testing.
 
-The team is aligned on [brief action items/decisions, if applicable].
+URL flipped (Bippin can confirm access).
 
-[Mention any pending items or follow-ups you’ve delegated, e.g., "Tarini will circulate the updated timeline by Friday."].
+Data Migration completed for UAT.
 
-Should you or the team need anything further before I return on [return date], please don’t hesitate to reach out. Otherwise, I’ll ensure to check in promptly upon my return.
+Next Release (Pending Promotions to UAT):
 
-Thank you, and I’ll see you after my break!
+Only latest changes/fixes from Dev will be promoted to the existing UAT deployment.
+
+RBAC Permissions: Need clarity on which permissions should be:
+
+Managed via solid ConfigMaps (platform-controlled).
+
+Handled via UI (developer-controlled).
+
+Action: Developer Leads ([Names]) and Platform Team will finalize this before July 19.
+
+Production Keycloak Release (July 19):
+
+Helm is NOT a blocker (UAT deployed via OC secrets). Helm enhancements are acceptable but not critical.
+
+Docs are already deployed in UAT for reference.
+
+Accountability & Next Steps:
+Recorded Session: All decisions/discussions are documented in the [link to recording]. If there are disagreements, the team had the opportunity to raise them during the call.
+
+Scrum Master/Manager Ask: Please help ensure any queries are directed to the recording or resolved via the existing plan. I’ve delegated pending tasks to [Names] for follow-up.
+
+Non-Negotiables in My Absence:
+No ad-hoc changes or scope creep without proper review. The UAT environment is stable, and the roadmap is clear.
+
+If issues arise, the team should refer to the documented process or escalate to you/[Scrum Master]—not use my absence to revisit settled matters.
+
+I’ll return on [return date] and will do a full handover then. For urgent matters, I’ve briefed [Backup Person] as a POC.
+
+Thank you for your trust and support. Let me know if you’d like to discuss further before I leave.
