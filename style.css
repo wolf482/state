@@ -1,32 +1,16 @@
-args:
-- /bin/sh
-- -c
-- |
-    # Move the operator-injected JVM arg to JAVA_OPTS
-    for arg in "$@"; do
-      if [[ $arg == -Djgroups.dns.query=* ]]; then
-        export JAVA_OPTS="$JAVA_OPTS $arg"
-      fi
-    done
-    
-    chmod +x /vault/secrets/secret.sh
-    source /vault/secrets/secret.sh
-    exec kc.sh --verbose start
+Requested Documentation:
+During the session, the team asked for the following materials, which I’ve compiled and linked below for easy reference:
 
+[Document Name + Hyperlink]
 
+[Document Name + Hyperlink]
 
+Next Steps:
 
-args:
-- /bin/sh
-- -c
-- |
-    export JAVA_OPTS="-Djgroups.dns.query=rhdh-kcv-discovery.ctl-svcs-orion-177398"
-    chmod +x /vault/secrets/secret.sh
-    source /vault/secrets/secret.sh
-    exec kc.sh --verbose start
+The team is aligned on [brief action items/decisions, if applicable].
 
+[Mention any pending items or follow-ups you’ve delegated, e.g., "Tarini will circulate the updated timeline by Friday."].
 
+Should you or the team need anything further before I return on [return date], please don’t hesitate to reach out. Otherwise, I’ll ensure to check in promptly upon my return.
 
-      env:
-      - name: JGROUPS_DNS_QUERY
-        value: rhdh-kcv-discovery.cti-svcs-orion-177398
+Thank you, and I’ll see you after my break!
