@@ -1,44 +1,10 @@
-Dear [Manager's Name],
+hank you for your query regarding the platform strategy for our new Linux VM request.
 
-As I prepare for my time off starting [start date], I want to ensure full transparency on the current state of the project and mitigate any potential misalignment in my absence. Below is a concise update:
+The rationale for requesting a legacy DEV Cloud VM instead of an OpenShift platform is that this environment is required for a Proof of Concept (POC) to certify new products. The specific tasks—installing, configuring, and testing Dockerized applications and running kubectl commands—require direct host-level access. This is necessary to simulate a bare-metal Kubernetes node and to perform low-level container runtime and orchestration client testing that is not feasible within the managed OpenShift environment.
 
-Key Achievements & Current Status:
-Release 001 Successfully Deployed in UAT (Keycloak):
+This VM will serve as a build and test node for preparing artifacts destined for the strategic OpenShift platform. Once the POC and certification are complete, the resulting containerized services will be deployed on OpenShift.
 
-Environment is open/running for testing.
+The planned CTC Version ID to be installed on this VM is: RHEL9-X86_64-LATEST (or the specific RHEL version you require, e.g., RHEL8-X86_64-LATEST). This will provide the necessary base OS for our container runtime testing.
 
-URL flipped (Bippin can confirm access).
+Please let me know if you require any further information to process this request.
 
-Data Migration completed for UAT.
-
-Next Release (Pending Promotions to UAT):
-
-Only latest changes/fixes from Dev will be promoted to the existing UAT deployment.
-
-RBAC Permissions: Need clarity on which permissions should be:
-
-Managed via solid ConfigMaps (platform-controlled).
-
-Handled via UI (developer-controlled).
-
-Action: Developer Leads ([Names]) and Platform Team will finalize this before July 19.
-
-Production Keycloak Release (July 19):
-
-Helm is NOT a blocker (UAT deployed via OC secrets). Helm enhancements are acceptable but not critical.
-
-Docs are already deployed in UAT for reference.
-
-Accountability & Next Steps:
-Recorded Session: All decisions/discussions are documented in the [link to recording]. If there are disagreements, the team had the opportunity to raise them during the call.
-
-Scrum Master/Manager Ask: Please help ensure any queries are directed to the recording or resolved via the existing plan. I’ve delegated pending tasks to [Names] for follow-up.
-
-Non-Negotiables in My Absence:
-No ad-hoc changes or scope creep without proper review. The UAT environment is stable, and the roadmap is clear.
-
-If issues arise, the team should refer to the documented process or escalate to you/[Scrum Master]—not use my absence to revisit settled matters.
-
-I’ll return on [return date] and will do a full handover then. For urgent matters, I’ve briefed [Backup Person] as a POC.
-
-Thank you for your trust and support. Let me know if you’d like to discuss further before I leave.
