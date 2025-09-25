@@ -1,10 +1,33 @@
-hank you for your query regarding the platform strategy for our new Linux VM request.
+Step 1: Test the Complete Chain
+bash
+# 1. Test the route directly from outside
+curl -v -H "Host: data-index-sonataflow-infra.apps.your-cluster.com" \
+  http://router.openshift-ingress.svc.cluster.local \
+  --resolve "data-index-sonataflow-infra.apps.your-cluster.com:80:$(oc get svc router-default -n openshift-ingress -o jsonpath='{.spec.clusterIP}')"
 
-The rationale for requesting a legacy DEV Cloud VM instead of an OpenShift platform is that this environment is required for a Proof of Concept (POC) to certify new products. The specific tasks—installing, configuring, and testing Dockerized applications and running kubectl commands—require direct host-level access. This is necessary to simulate a bare-metal Kubernetes node and to perform low-level container runtime and orchestration client testing that is not feasible within the managed OpenShift environment.
+# 2. Test from inside the cluster through the route
+oc run route-test --image=curlimages/curl -i --rm --restart=Never -- \
+  curl -v http://sonataflow-data-index-sonataflow-infra.apps.your-cluster.com/graphql
 
-This VM will serve as a build and test node for preparing artifacts destined for the strategic OpenShift platform. Once the POC and certification are complete, the resulting containerized services will be deployed on OpenShift.
+# 3. Check what the router sees
+oc logs -n openshift-ingress deployment/router-default --tail=100 | grep sonataflow-data-index
+Step 2: Check Service Account and Security
+bash
+# Check if the service account has proper permissions
+oc describe serviceaccount default -n sonataflow-infra
 
-The planned CTC Version ID to be installed on this VM is: RHEL9-X86_64-LATEST (or the specific RHEL version you require, e.g., RHEL8-X86_64-LATEST). This will provide the necessary base OS for our container runtime testing.
+# Check security context constraints
+oc get pod -n sonataflow-infra -l app.kubernetes.io/name=data-index-service -o yaml | grep -A10 securityContext
 
-Please let me know if you require any further information to process this request.
+# Check if any admission webhooks are blocking
+oc get validatingwebhookconfiguration,mutatingwebhookconfiguration | grep -i route
+Step 3: Router to Service Connectivity
+bash
+# Test from router namespace to your service
+oc run router-side-test --image=nicolaka/netshoot -n openshift-ingress -i --rm --restart=Never -- \
+  /bin/bash -c "curl -v http://sonataflow-platform-data-index-service.sonataflow-infra.svc.cluster.local:80/health"
 
+# Check if the service is reachable from router pods
+ROUTER_POD=$(oc get pods -n openshift-ingress -l ingresscontroller.operator.openshift.io/deployment-ingresscontroller=default -o jsonpath='{.items[0].metadata.name}')
+oc exec -n openshift-ingress $ROUTER_POD -- \
+  curl -s http://sonataflow-platform-data-index-service.sonataflow-infra.svc.cluster.local:80/health
