@@ -1,13 +1,15 @@
-graphql
-query GetAllWorkflows {
-  ProcessInstances {
+query GetGreetingWorkflows {
+  ProcessInstances(where: {processId: {like: "%greeting%"}}) {
     id
     processId
-    processName
     state
     start
     end
-    businessKey
-    parentProcessInstanceId
+    nodes {
+      name
+      enter
+      exit
+      type
+    }
   }
 }
