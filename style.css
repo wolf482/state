@@ -1,15 +1,10 @@
-query GetGreetingWorkflows {
-  ProcessInstances(where: {processId: {like: "%greeting%"}}) {
-    id
-    processId
-    state
-    start
-    end
-    nodes {
-      name
-      enter
-      exit
-      type
-    }
-  }
-}
+spec:
+  properties:
+    - name: quarkus.smallrye-graphql.enabled
+      value: "true"
+    - name: quarkus.smallrye-graphql.ui.enable
+      value: "true"
+    - name: quarkus.smallrye-graphql.ui.always-include
+      value: "true"
+    - name: quarkus.http.cors
+      value: "true"
