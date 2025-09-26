@@ -1,10 +1,5 @@
-spec:
   properties:
-    - name: quarkus.smallrye-graphql.enabled
-      value: "true"
-    - name: quarkus.smallrye-graphql.ui.enable
-      value: "true"
-    - name: quarkus.smallrye-graphql.ui.always-include
-      value: "true"
-    - name: quarkus.http.cors
-      value: "true"
+    quarkus.smallrye-graphql.enabled: "true"
+    quarkus.smallrye-graphql.ui.enable: "true"
+    quarkus.smallrye-graphql.ui.always-include: "true"
+    quarkus.http.cors: "true"
