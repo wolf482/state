@@ -1,14 +1,17 @@
-// quick-test.js
-try {
-    require('node-gyp-build');
-    console.log('✅ node-gyp-build loaded successfully');
-    
-    const { execSync } = require('child_process');
-    execSync('node ./node_modules/node-gyp-build/bin.js', { 
-        cwd: __dirname, 
-        stdio: 'inherit' 
-    });
-    console.log('✅ node-gyp-build binary executed successfully');
-} catch (e) {
-    console.log('❌ Error:', e.message);
-}
+Hi [Person's Name],
+
+I saw you deleted my comment on the "Revamp UI" Confluence page this morning.
+
+I want to clarify my intent. The comment was to ensure a specific item—verifying that the "scale up the replica set" workflow is functional and reporting correctly in the frontend—is tracked and confirmed before we go to production.
+
+I had raised this internally last week as it was not on the initial implementation checklist shared by Bippin. Since I hadn't received a confirmation on whether it would be addressed, I added it to the page for visibility.
+
+I understand there may be a more appropriate place for this feedback. Could you please direct me to the correct channel? More importantly, could you or the concerned team member confirm the status of this item?
+
+My key questions are:
+
+Was the "scale up the replica set" workflow tested in UAT?
+
+If it was not tested, what is the plan for handling it in production?
+
+I just want to ensure we have a smooth rollout. Thanks for your help.
