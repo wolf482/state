@@ -1,5 +1,14 @@
-  properties:
-    quarkus.smallrye-graphql.enabled: "true"
-    quarkus.smallrye-graphql.ui.enable: "true"
-    quarkus.smallrye-graphql.ui.always-include: "true"
-    quarkus.http.cors: "true"
+// quick-test.js
+try {
+    require('node-gyp-build');
+    console.log('✅ node-gyp-build loaded successfully');
+    
+    const { execSync } = require('child_process');
+    execSync('node ./node_modules/node-gyp-build/bin.js', { 
+        cwd: __dirname, 
+        stdio: 'inherit' 
+    });
+    console.log('✅ node-gyp-build binary executed successfully');
+} catch (e) {
+    console.log('❌ Error:', e.message);
+}
