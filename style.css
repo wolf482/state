@@ -1,7 +1,186 @@
-Hi , to action your point on proper testing, we need to highlight two key risks first:
+1. Check Overall SonataFlow Platform Status
+Using OpenShift CLI:
+bash
+# Check SonataPlatform custom resource status
+oc get sonataplatform -o yaml
 
-Single Replica Risk: Running with one pod replicaset increases the risk of downtime.
+# Check all SonataFlow resources in the namespace
+oc get sonataflow -o wide
 
-Reporting Issue: The orchestrator is not reporting properly in OCP (names are blank).
+# Check all SonataFlowPlatform resources
+oc get sonataflowplatform -o wide
+Check Platform Components:
+bash
+# List all pods related to SonataFlow
+oc get pods -l app=sonataflow-platform
 
-Please advise how you'd like us to proceed. We'll hold changes in UAT until we have your direction.
+# Or check all pods and filter by SonataFlow
+oc get pods | grep -E "(sonataflow|data-index|job-service)"
+2. Validate DataIndex Status
+Check DataIndex Deployment:
+bash
+# Check DataIndex specific resources
+oc get deployment -l app=data-index
+oc get pods -l app=data-index
+
+# Check DataIndex service
+oc get service data-index
+
+# Check DataIndex pod logs
+oc logs -l app=data-index --tail=50
+
+# Check DataIndex health endpoint
+oc exec -it $(oc get pods -l app=data-index -o name) -- curl -s http://localhost:8080/q/health
+Verify DataIndex Connectivity:
+bash
+# Port forward to test DataIndex locally
+oc port-forward svc/data-index 8080:8080 &
+curl http://localhost:8080/q/health
+Check DataIndex Database:
+bash
+# If using PostgreSQL, check the database connection
+oc exec -it $(oc get pods -l app=data-index -o name) -- \
+  curl -s http://localhost:8080/q/health/ready
+3. Validate Job Service Status
+Check Job Service Deployment:
+bash
+# Check Job Service resources
+oc get deployment -l app=job-service
+oc get pods -l app=job-service
+
+# Check Job Service logs
+oc logs -l app=job-service --tail=50
+
+# Check Job Service health
+oc exec -it $(oc get pods -l app=job-service -o name) -- \
+  curl -s http://localhost:8080/q/health
+Verify Job Service Functionality:
+bash
+# Check if Job Service can process jobs
+oc exec -it $(oc get pods -l app=job-service -o name) -- \
+  curl -s http://localhost:8080/jobs | jq .
+4. Validate Workflow Status
+Check SonataFlow Workflows:
+bash
+# List all workflows
+oc get sonataflow
+
+# Check specific workflow status
+oc get sonataflow <workflow-name> -o yaml
+
+# Check workflow pods
+oc get pods -l app.kubernetes.io/name=<workflow-name>
+Verify Workflow Deployment:
+bash
+# Check workflow service
+oc get service -l app.kubernetes.io/name=<workflow-name>
+
+# Check workflow route/ingress
+oc get route -l app.kubernetes.io/name=<workflow-name>
+Test Workflow Endpoints:
+bash
+# Get workflow URL
+WORKFLOW_URL=$(oc get route <workflow-name> -o jsonpath='{.spec.host}')
+
+# Check workflow health
+curl -s "https://${WORKFLOW_URL}/q/health"
+
+# Check workflow definition
+curl -s "https://${WORKFLOW_URL}/management/processes" | jq .
+5. Comprehensive Status Check Script
+Create a comprehensive validation script:
+
+bash
+#!/bin/bash
+
+echo "=== SonataFlow Platform Status ==="
+oc get sonataflowplatform -o wide
+
+echo -e "\n=== DataIndex Status ==="
+oc get deployment,svc,pod -l app=data-index
+echo "DataIndex Health:"
+oc exec -it $(oc get pods -l app=data-index -o name | head -1) -- \
+  curl -s http://localhost:8080/q/health | jq .status
+
+echo -e "\n=== Job Service Status ==="
+oc get deployment,svc,pod -l app=job-service
+echo "Job Service Health:"
+oc exec -it $(oc get pods -l app=job-service -o name | head -1) -- \
+  curl -s http://localhost:8080/q/health | jq .status
+
+echo -e "\n=== Workflows Status ==="
+oc get sonataflow
+oc get pods -l app.kubernetes.io/managed-by=sonataflow-platform
+
+echo -e "\n=== Recent Events ==="
+oc get events --sort-by='.lastTimestamp' | tail -10
+6. Check Integration Between Components
+Verify DataIndex Can Read Workflows:
+bash
+# Check if workflows are registered in DataIndex
+oc exec -it $(oc get pods -l app=data-index -o name) -- \
+  curl -s http://localhost:8080/processes | jq .
+Check Job Service Queue:
+bash
+# Check pending jobs
+oc exec -it $(oc get pods -l app=job-service -o name) -- \
+  curl -s http://localhost:8080/jobs | jq '. | length'
+7. Monitor Workflow Execution
+Start a Test Workflow:
+bash
+# Trigger a workflow instance
+WORKFLOW_URL=$(oc get route <workflow-name> -o jsonpath='{.spec.host}')
+curl -X POST "https://${WORKFLOW_URL}/<workflow-path>" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+Check Workflow Instances in DataIndex:
+bash
+# Monitor workflow instances
+oc exec -it $(oc get pods -l app=data-index -o name) -- \
+  curl -s http://localhost:8080/processInstances | jq .
+8. Check Persistent Storage (if configured)
+bash
+# Check PVC status for DataIndex and Job Service
+oc get pvc -l app in (data-index,job-service)
+
+# Check database connections
+oc get pods -l app in (postgresql,data-index,job-service)
+Expected Healthy Status Indicators:
+DataIndex:
+
+Pod running ✅
+
+Health checks passing ✅
+
+Can connect to database ✅
+
+API responding ✅
+
+Job Service:
+
+Pod running ✅
+
+Health checks passing ✅
+
+Job queue accessible ✅
+
+Workflows:
+
+SonataFlow resources in "Ready" state ✅
+
+Workflow pods running ✅
+
+Routes accessible ✅
+
+APIs responding ✅
+
+Integration:
+
+DataIndex can see workflow definitions ✅
+
+Job Service can process workflow jobs ✅
+
+Workflows can communicate with DataIndex ✅
+
+Run these checks to get a comprehensive view of your SonataFlow platform health and identify any issues with the DataIndex, Job Service, or workflow deployments.
+
