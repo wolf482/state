@@ -32,3 +32,10 @@ Click "Configure..." and add localhost:9229
 You should see your remote target appear under "Remote Target"
 
 Click "inspect" to open DevTools
+
+
+You're absolutely right! Let me clarify the strategy:
+
+The first step with process.memoryUsage() was just to identify which of your 3 pods is the most critical - the one with the worst memory performance that needs deep investigation.
+
+Now that you've identified the problematic pod, the next step with Node Inspector + Chrome DevTools is exactly what you should run on that specific pod to get detailed heap analysis and find the root cause of the memory issues.
