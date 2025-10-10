@@ -1,13 +1,22 @@
-const heapdump = require('heapdump');
+oc exec -it <pod-name> -n <namespace> -- /bin/bash
 
-app.get('/debug/heapdump', (req, res) => {
-  const filename = `/tmp/heapdump-${Date.now()}.heapsnapshot`;
-  heapdump.writeSnapshot(filename, (err, filename) => {
-    if (err) {
-      console.error('Heap dump failed:', err);
-      res.status(500).send('Heap dump failed');
-    } else {
-      res.download(filename);
-    }
-  });
+# 2. Create script
+cat > /tmp/take_heapdump.js << 'EOF'
+const heapdump = require('heapdump');
+const fs = require('fs');
+
+const filename = `/tmp/heapdump-${process.pid}-${Date.now()}.heapsnapshot`;
+console.log('Creating heap dump at:', filename);
+
+heapdump.writeSnapshot(filename, (err) => {
+  if (err) {
+    console.error('Failed:', err);
+    process.exit(1);
+  }
+  console.log('Success! File size:', fs.statSync(filename).size, 'bytes');
+  process.exit(0);
 });
+EOF
+
+# 3. Run it
+node /tmp/take_heapdump.js
