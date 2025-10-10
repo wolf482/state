@@ -1,14 +1,8 @@
-echo 'const heapdump = require("heapdump");' > /tmp/take_heapdump.js
-echo 'const fs = require("fs");' >> /tmp/take_heapdump.js
-echo '' >> /tmp/take_heapdump.js
-echo 'const filename = `/tmp/heapdump-${process.pid}-${Date.now()}.heapsnapshot`;' >> /tmp/take_heapdump.js
-echo 'console.log("Creating heap dump at:", filename);' >> /tmp/take_heapdump.js
-echo '' >> /tmp/take_heapdump.js
-echo 'heapdump.writeSnapshot(filename, (err) => {' >> /tmp/take_heapdump.js
-echo '  if (err) {' >> /tmp/take_heapdump.js
-echo '    console.error("Failed:", err);' >> /tmp/take_heapdump.js
-echo '    process.exit(1);' >> /tmp/take_heapdump.js
-echo '  }' >> /tmp/take_heapdump.js
-echo '  console.log("Success! File size:", fs.statSync(filename).size, "bytes");' >> /tmp/take_heapdump.js
-echo '  process.exit(0);' >> /tmp/take_heapdump.js
-echo '});' >> /tmp/take_heapdump.js
+node -e "
+const used = process.memoryUsage();
+console.log('Memory Usage:');
+Object.keys(used).forEach(key => {
+  console.log(\`  \${key}: \${Math.round(used[key] / 1024 / 1024)} MB\`);
+});
+console.log('RSS (Total):', Math.round(used.rss / 1024 / 1024) + 'MB');
+"
