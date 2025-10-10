@@ -1,22 +1,14 @@
-oc exec -it <pod-name> -n <namespace> -- /bin/bash
-
-# 2. Create script
-cat > /tmp/take_heapdump.js << 'EOF'
-const heapdump = require('heapdump');
-const fs = require('fs');
-
-const filename = `/tmp/heapdump-${process.pid}-${Date.now()}.heapsnapshot`;
-console.log('Creating heap dump at:', filename);
-
-heapdump.writeSnapshot(filename, (err) => {
-  if (err) {
-    console.error('Failed:', err);
-    process.exit(1);
-  }
-  console.log('Success! File size:', fs.statSync(filename).size, 'bytes');
-  process.exit(0);
-});
-EOF
-
-# 3. Run it
-node /tmp/take_heapdump.js
+echo 'const heapdump = require("heapdump");' > /tmp/take_heapdump.js
+echo 'const fs = require("fs");' >> /tmp/take_heapdump.js
+echo '' >> /tmp/take_heapdump.js
+echo 'const filename = `/tmp/heapdump-${process.pid}-${Date.now()}.heapsnapshot`;' >> /tmp/take_heapdump.js
+echo 'console.log("Creating heap dump at:", filename);' >> /tmp/take_heapdump.js
+echo '' >> /tmp/take_heapdump.js
+echo 'heapdump.writeSnapshot(filename, (err) => {' >> /tmp/take_heapdump.js
+echo '  if (err) {' >> /tmp/take_heapdump.js
+echo '    console.error("Failed:", err);' >> /tmp/take_heapdump.js
+echo '    process.exit(1);' >> /tmp/take_heapdump.js
+echo '  }' >> /tmp/take_heapdump.js
+echo '  console.log("Success! File size:", fs.statSync(filename).size, "bytes");' >> /tmp/take_heapdump.js
+echo '  process.exit(0);' >> /tmp/take_heapdump.js
+echo '});' >> /tmp/take_heapdump.js
