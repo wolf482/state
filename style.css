@@ -10,3 +10,25 @@ console.log('RSS (Total):', Math.round(used.rss / 1024 / 1024) + 'MB');
 
 
 node --inspect -e "setTimeout(() => {}, 60000)"
+
+
+
+
+1. First, Enable Debugging in Your Pod
+bash
+# Start the debug session
+oc exec <pod-name> -n <namespace> -- node --inspect -e "setTimeout(() => {}, 60000)" &
+Note: The & runs it in background so you can run other commands.
+
+2. Port Forward to Access the Debugger
+bash
+# Find the debug port (usually 9229)
+oc port-forward <pod-name> -n <namespace> 9229:9229
+3. Connect Chrome DevTools
+Open Chrome and go to chrome://inspect
+
+Click "Configure..." and add localhost:9229
+
+You should see your remote target appear under "Remote Target"
+
+Click "inspect" to open DevTools
