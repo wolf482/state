@@ -6,3 +6,7 @@ Object.keys(used).forEach(key => {
 });
 console.log('RSS (Total):', Math.round(used.rss / 1024 / 1024) + 'MB');
 "
+
+
+
+node --inspect -e "setTimeout(() => {}, 60000)"
