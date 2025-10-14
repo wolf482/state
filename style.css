@@ -1,3 +1,11 @@
+To move forward with Red Hat support, we must provide heap dump analysis. This is critical to determine whether the OOM issue originates in our custom plugins or the core product.
+
+I’ve shared the instructions for generating Node.js memory dumps. Please prioritize this so we can supply Red Hat with the necessary data and resolve the issue efficiently.
+
+Let me know if there are any blockers—I’m happy to help.
+
+
+
 node -e "
 const used = process.memoryUsage();
 console.log('Memory Usage:');
