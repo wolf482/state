@@ -1,8 +1,14 @@
-To move forward with Red Hat support, we must provide heap dump analysis. This is critical to determine whether the OOM issue originates in our custom plugins or the core product.
+To ensure Red Hat has the full picture, we should clarify that this OOM issue began after:
 
-I’ve shared the instructions for generating Node.js memory dumps. Please prioritize this so we can supply Red Hat with the necessary data and resolve the issue efficiently.
+The latest custom plugin deployments
 
-Let me know if there are any blockers—I’m happy to help.
+UI revamp
+
+Enabling the orchestrator in RHDH
+
+This was not occurring in RHDH v1.5.1. Providing this context will help Red Hat focus their investigation appropriately.
+
+Let’s share these details with them immediately.
 
 
 
