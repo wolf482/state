@@ -1,12 +1,7 @@
-Team,
+Hello all,
 
-To fix the production OOM errors, we need the heap dump we discussed with the vendor.
+This group has been created to coordinate the RFT (Request for Testing) for the serverless logic.
 
-Why: The dump is required to identify the root cause and create a code fix, not just a temporary config change.
+The purpose is to ensure we have a single place for communication if anything is needed or if there are status updates. Please feel free to post here.
 
-Opportunity: This fix can be included in the upcoming release.
-
-Action Needed:
-Please provide the heap dump from a failing pod. Let me know if a formal task needs to be created for this.
-
-This is a critical step to prevent further pod restarts.
+Thank you.
