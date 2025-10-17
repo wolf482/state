@@ -1,21 +1,12 @@
-CREATE TABLE flyway_schema_history (
-    installed_rank INT NOT NULL,
-    version VARCHAR(50),
-    description VARCHAR(200) NOT NULL,
-    type VARCHAR(20) NOT NULL,
-    script VARCHAR(1000) NOT NULL,
-    checksum INT,
-    installed_by VARCHAR(100) NOT NULL,
-    installed_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    execution_time INT NOT NULL,
-    success BOOLEAN NOT NULL,
-    PRIMARY KEY (installed_rank)
-);
+Team,
 
-INSERT INTO flyway_schema_history (
-    installed_rank, version, description, type, script, 
-    checksum, installed_by, execution_time, success
-) VALUES (
-    1, '1.35.0', '<< Baseline >>', 'BASELINE', '<< Baseline >>',
-    NULL, 'your_username', 0, true
-);
+To fix the production OOM errors, we need the heap dump we discussed with the vendor.
+
+Why: The dump is required to identify the root cause and create a code fix, not just a temporary config change.
+
+Opportunity: This fix can be included in the upcoming release.
+
+Action Needed:
+Please provide the heap dump from a failing pod. Let me know if a formal task needs to be created for this.
+
+This is a critical step to prevent further pod restarts.
