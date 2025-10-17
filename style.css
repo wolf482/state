@@ -1,55 +1,21 @@
-To ensure Red Hat has the full picture, we should clarify that this OOM issue began after:
+CREATE TABLE flyway_schema_history (
+    installed_rank INT NOT NULL,
+    version VARCHAR(50),
+    description VARCHAR(200) NOT NULL,
+    type VARCHAR(20) NOT NULL,
+    script VARCHAR(1000) NOT NULL,
+    checksum INT,
+    installed_by VARCHAR(100) NOT NULL,
+    installed_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    execution_time INT NOT NULL,
+    success BOOLEAN NOT NULL,
+    PRIMARY KEY (installed_rank)
+);
 
-The latest custom plugin deployments
-
-UI revamp
-
-Enabling the orchestrator in RHDH
-
-This was not occurring in RHDH v1.5.1. Providing this context will help Red Hat focus their investigation appropriately.
-
-Let’s share these details with them immediately.
-
-
-
-node -e "
-const used = process.memoryUsage();
-console.log('Memory Usage:');
-Object.keys(used).forEach(key => {
-  console.log(\`  \${key}: \${Math.round(used[key] / 1024 / 1024)} MB\`);
-});
-console.log('RSS (Total):', Math.round(used.rss / 1024 / 1024) + 'MB');
-"
-
-
-
-node --inspect -e "setTimeout(() => {}, 60000)"
-
-
-
-
-1. First, Enable Debugging in Your Pod
-bash
-# Start the debug session
-oc exec <pod-name> -n <namespace> -- node --inspect -e "setTimeout(() => {}, 60000)" &
-Note: The & runs it in background so you can run other commands.
-
-2. Port Forward to Access the Debugger
-bash
-# Find the debug port (usually 9229)
-oc port-forward <pod-name> -n <namespace> 9229:9229
-3. Connect Chrome DevTools
-Open Chrome and go to chrome://inspect
-
-Click "Configure..." and add localhost:9229
-
-You should see your remote target appear under "Remote Target"
-
-Click "inspect" to open DevTools
-
-
-You're absolutely right! Let me clarify the strategy:
-
-The first step with process.memoryUsage() was just to identify which of your 3 pods is the most critical - the one with the worst memory performance that needs deep investigation.
-
-Now that you've identified the problematic pod, the next step with Node Inspector + Chrome DevTools is exactly what you should run on that specific pod to get detailed heap analysis and find the root cause of the memory issues.
+INSERT INTO flyway_schema_history (
+    installed_rank, version, description, type, script, 
+    checksum, installed_by, execution_time, success
+) VALUES (
+    1, '1.35.0', '<< Baseline >>', 'BASELINE', '<< Baseline >>',
+    NULL, 'your_username', 0, true
+);
