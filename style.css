@@ -1,3 +1,17 @@
+
+SELECT 
+    CASE 
+        WHEN metadata->>'name' LIKE '11840_%' THEN 'service_account'
+        WHEN metadata->>'name' LIKE '%sa' THEN 'support_user' 
+        ELSE 'developer_user'
+    END as user_type,
+    COUNT(*) as count
+FROM cds.user_entities
+GROUP BY user_type;
+
+
+
+
 Task ID	Cadence	Meaning	Purpose
 run_ldap_user_refresh	PT6H	Every 6 Hours	Refreshes user data from LDAP/Active Directory
 run_ldap_group_refresh	PT6H	Every 6 Hours	Refreshes group memberships from LDAP/AD
