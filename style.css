@@ -1,4 +1,9 @@
--- Find entities that haven't been attempted in a long time and are not scheduled for a future update.
+-- Entities with processing errors that haven't been updated in a long time
+SELECT COUNT(*) 
+FROM refresh_state 
+WHERE errors IS NOT NULL 
+  AND next_update_at < NOW() - INTERVAL '30 days'
+  AND last_discovery_at < NOW() - INTERVAL '30 days';-- Find entities that haven't been attempted in a long time and are not scheduled for a future update.
 SELECT COUNT(*), entity_id, status
 FROM refresh_state
 WHERE next_update_at < NOW() - INTERVAL '7 days'
