@@ -9,3 +9,13 @@ FROM refresh_state
 WHERE next_update_at < NOW() - INTERVAL '7 days'
   AND (last_discovery_at < NOW() - INTERVAL '7 days' OR last_discovery_at IS NULL)
 GROUP BY entity_id, status;
+
+
+
+
+-- DELETE entities with errors that are very old and not being processed
+DELETE FROM refresh_state 
+WHERE errors IS NOT NULL 
+  AND next_update_at < NOW() - INTERVAL '30 days'
+  AND last_discovery_at < NOW() - INTERVAL '30 days'
+LIMIT 5000; -- Start with a small batch
