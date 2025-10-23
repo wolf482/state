@@ -1,10 +1,6 @@
-"Hey [Scrum Master's Name], hope you're having a better day than I am! 😅 I'm hitting a wall and need your help to unblock this.
-
-You know I'm deep in the product certification, and I'm really trying to stay on top of any production issues. Right now, I'm stuck because I need a heap dump to confirm this memory leak.
-
-I've asked Arun about it three times now in the group chat, but I can't get a straight answer—it's all "I will" and then nothing. I don't want to make it a big thing, but it's blocking me from getting the proof we need to loop in Vineet for a fix.
-
-Also, while I have you, any chance you can pull in Mohamed for a quick status update on the QA team's stress tests? I need that info to complete my part of the certification.
-
-Let me know if you can help nudge things along! Thanks, man."
-
+-- Find entities that haven't been attempted in a long time and are not scheduled for a future update.
+SELECT COUNT(*), entity_id, status
+FROM refresh_state
+WHERE next_update_at < NOW() - INTERVAL '7 days'
+  AND (last_discovery_at < NOW() - INTERVAL '7 days' OR last_discovery_at IS NULL)
+GROUP BY entity_id, status;
