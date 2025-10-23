@@ -1,3 +1,14 @@
+Task ID	Cadence	Meaning	Purpose
+run_ldap_user_refresh	PT6H	Every 6 Hours	Refreshes user data from LDAP/Active Directory
+run_ldap_group_refresh	PT6H	Every 6 Hours	Refreshes group memberships from LDAP/AD
+run_project_refresh	0 */4 * * *	Every 4 Hours (Cron syntax)	General catalog processing/entity refresh
+run_csi_refresh	0 0 * * *	Daily at Midnight (Cron)	Custom Software Integration refresh
+run_cluster_refresh	0 0 * * *	Daily at Midnight (Cron)	Your OpenShift/Kubernetes cluster refresh
+run_update_request_status...	PT30M	Every 30 Minutes	Internal order management status updates
+
+
+
+
 -- Entities with processing errors that haven't been updated in a long time
 SELECT COUNT(*) 
 FROM refresh_state 
