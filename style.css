@@ -1,30 +1,22 @@
--- Create the flyway_schema_history table in the correct schema
-CREATE TABLE IF NOT EXISTS "create.cop-project".flyway_schema_history (
-    installed_rank INTEGER NOT NULL,
-    version VARCHAR(50),
-    description VARCHAR(200) NOT NULL,
-    type VARCHAR(20) NOT NULL,
-    script VARCHAR(1000) NOT NULL,
-    checksum INTEGER,
-    installed_by VARCHAR(100) NOT NULL,
-    installed_on TIMESTAMP NOT NULL DEFAULT now(),
-    execution_time INTEGER NOT NULL,
-    success BOOLEAN NOT NULL,
-    PRIMARY KEY (installed_rank)
-);
+# Enable Flyway
+kie.flyway.enabled=true
+quarkus.flyway.enabled=true
+quarkus.flyway.migrate-at-start=true
 
--- Create baseline record
-INSERT INTO "create.cop-project".flyway_schema_history (
-    installed_rank, version, description, type, script, 
-    checksum, installed_by, installed_on, execution_time, success
-) VALUES (
-    1, '1.35.0', 'Baseline from SonataWorkflow 1.35.0', 'BASELINE', '<< Baseline >>',
-    NULL, current_user, NOW(), 0, true
-);
+# Point to your existing history table
+quarkus.flyway.table=kie_flyway_history_runtime_persistence
 
--- Verify the table was created
-SELECT * FROM "create.cop-project".flyway_schema_history;
+# Schema configuration
+quarkus.flyway.schemas=create-ocp-project
 
+# Baseline configuration for existing database
+quarkus.flyway.baseline-on-migrate=true
+quarkus.flyway.baseline-version=1.35.0
+quarkus.flyway.baseline-description=Baseline from SonataWorkflow 1.35.0
+
+# Additional properties to help with migration
+quarkus.flyway.validate-on-migrate=false
+quarkus.flyway.out-of-order=true
 
 
 
