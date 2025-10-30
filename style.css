@@ -21,7 +21,6 @@ quarkus.flyway.out-of-order=true
 
 
 
-
 SELECT 
     CASE 
         WHEN metadata->>'name' LIKE '11840_%' THEN 'service_account'
