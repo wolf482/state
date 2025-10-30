@@ -1,4 +1,18 @@
 
+Team Update - Memory Leak Issue:
+
+✅ Temporary fix working: Increased memory to 4Gi is buying us time - OOM kills now happen every 2 days instead of daily
+
+🔄 Action plan:
+
+Off-hours restart: Setting up periodic rollout restarts during low traffic
+
+QA replication: Created Jira subtask to reproduce the memory leak in QA environment
+
+Alert check: @Bippin - can you verify which distribution list gets the OOM alerts? I didn't receive any notifications
+
+
+
 SELECT 
     CASE 
         WHEN metadata->>'name' LIKE '11840_%' THEN 'service_account'
