@@ -53,9 +53,24 @@ function filterXLSBWithMultipleColumns(filePath, filters) {
                     continue;
                 }
                 
-                // Compare values (case-insensitive string comparison)
-                if (String(row[column]).toLowerCase() !== String(value).toLowerCase()) {
-                    return false; // Row doesn't match this filter condition
+                // Handle array values (OR condition - match any of the values)
+                if (Array.isArray(value)) {
+                    let matchFound = false;
+                    for (const val of value) {
+                        if (String(row[column]).toLowerCase() === String(val).toLowerCase()) {
+                            matchFound = true;
+                            break;
+                        }
+                    }
+                    if (!matchFound) {
+                        return false; // Row doesn't match any of the values in the array
+                    }
+                } 
+                // Handle single value
+                else {
+                    if (String(row[column]).toLowerCase() !== String(value).toLowerCase()) {
+                        return false; // Row doesn't match this filter condition
+                    }
                 }
             }
             return true; // Row matches all filter conditions
@@ -84,26 +99,26 @@ function filterXLSBWithMultipleColumns(filePath, filters) {
 
 // USAGE EXAMPLES:
 
-// Example 1: Filter with specific values for all 4 columns
+// Example 1: One column with two values (OR condition), others with single values
 const results1 = filterXLSBWithMultipleColumns('your_file.xlsb', {
-    'Column1': 'Value1',      // Filter for Column1
-    'Column2': 'Value2',      // Filter for Column2  
-    'Column3': 'Value3',      // Filter for Column3
-    'Column4': 'Value4'       // Filter for Column4
+    'Column1': ['Value1', 'Value2'],  // Column1 can be Value1 OR Value2
+    'Column2': 'Value3',              // Column2 must be Value3
+    'Column3': 'Value4',              // Column3 must be Value4
+    'Column4': 'Value5'               // Column4 must be Value5
 });
 
-// Example 2: Filter with only some columns (leave others empty for no filter)
+// Example 2: Multiple columns with multiple values
 const results2 = filterXLSBWithMultipleColumns('your_file.xlsb', {
-    'Column1': 'SpecificValue',
-    'Column2': '',           // No filter for Column2
-    'Column3': 'AnotherValue',
-    'Column4': null          // No filter for Column4
+    'Column1': ['ValueA', 'ValueB'],  // Column1 = ValueA OR ValueB
+    'Column2': ['ValueX', 'ValueY'],  // Column2 = ValueX OR ValueY
+    'Column3': 'SingleValue',         // Column3 must be SingleValue
+    'Column4': ''                     // No filter for Column4
 });
 
-// Example 3: Your actual usage - REPLACE WITH YOUR REAL COLUMN NAMES AND VALUES
-const yourResults = filterXLSBWithMultipleColumns('your_file.xlsb', {
-    'Department': 'IT',           // Replace with your 1st column name and value
-    'Status': 'Active',           // Replace with your 2nd column name and value
-    'Region': 'North',            // Replace with your 3rd column name and value
-    'Priority': 'High'            // Replace with your 4th column name and value
+// Example 3: Mixed single and multiple values
+const results3 = filterXLSBWithMultipleColumns('your_file.xlsb', {
+    'Department': ['IT', 'Engineering'],  // Department = IT OR Engineering
+    'Status': 'Active',                   // Status must be Active
+    'Priority': ['High', 'Critical'],     // Priority = High OR Critical
+    'Region': 'North'                     // Region must be North
 });
