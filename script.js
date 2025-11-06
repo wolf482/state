@@ -1,36 +1,23 @@
-.container {
-    width: fit-content; /* Container fits content */
-    max-width: 95vw; /* But don't exceed viewport width */
-    margin: 10px auto;
+.file-item {
+    padding: 12px 20px;
+    margin: 6px 0;
     background: white;
-    padding: 15px;
+    border: 2px solid #1e88e5;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    overflow-x: auto; /* Scroll if table is too wide */
+    cursor: pointer;
+    width: fit-content;
+    min-width: 200px;
+    text-align: center;
+    font-weight: 600;
+    color: #1e88e5;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: block; /* Make it a block element like a button */
 }
 
-.blue-table {
-    width: 100%;
-    min-width: 800px; /* Ensure table has minimum width */
-    border-collapse: collapse;
-    font-family: Arial, sans-serif;
-    table-layout: auto;
-}
-
-.blue-table th,
-.blue-table td {
-    padding: 10px 12px;
-    text-align: left;
-    border-bottom: 1px solid #e3f2fd;
-    white-space: nowrap;
-}
-
-.blue-table th {
-    background: #1976d2;
+.file-item:hover {
+    background: #1e88e5;
     color: white;
-    font-weight: bold;
-}
-
-.blue-table tr:hover td {
-    background: #e3f2fd;
+    box-shadow: 0 4px 12px rgba(30, 136, 229, 0.4);
+    border-color: #1565c0;
 }
