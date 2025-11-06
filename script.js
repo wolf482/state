@@ -1,65 +1,80 @@
 #!/bin/bash
 
-# Configuration
+# Corrected script with the right path
 SHAREPOINT_URL="https://otshare.eur.citi.net"
-SITE_PATH="/sites/SSM"
+SITE_PATH="/sites/SSM/Reports/VTM/SNOW_VR_Extract"
 DOWNLOAD_DIR="./downloads"
-USERNAME="ye89463"
-PASSWORD="Adminadmin29595%"
 LOG_FILE="./sharepoint_download.log"
 
-# Log function
+# Clear previous log
+> "$LOG_FILE"
+
 log() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
 }
 
-# Create download directory
 mkdir -p "$DOWNLOAD_DIR"
 
-# Find and download latest file
-find_latest_file() {
-    log "Searching for latest Snow_VR_Extract file..."
+log "🚀 Starting SharePoint download with correct path"
+log "📋 Using path: $SITE_PATH"
+
+echo "🔍 Searching for latest file..."
+
+for days_back in {0..7}; do
+    date_str=$(date -d "$days_back days ago" +%Y_%m_%d)
     
-    for days_back in {0..7}; do
-        date_str=$(date -d "$days_back days ago" +%Y_%m_%d)
-        filename="Snow_VR_Extract_${date_str}.xlsb"
-        full_url="${SHAREPOINT_URL}${SITE_PATH}/${filename}"
-        output_path="${DOWNLOAD_DIR}/${filename}"
+    # Try both filename patterns (with and without space)
+    filenames=(
+        "Snow_VR_Extract_${date_str}.xlsb"
+        "Snow_VR_Extract ${date_str}.xlsb"
+    )
+    
+    for filename in "${filenames[@]}"; do
+        # URL encode spaces if needed
+        if [[ "$filename" == *" "* ]]; then
+            encoded_filename=$(echo "$filename" | sed 's/ /%20/g')
+        else
+            encoded_filename="$filename"
+        fi
+        
+        full_url="${SHAREPOINT_URL}${SITE_PATH}/${encoded_filename}"
+        output_path="${DOWNLOAD_DIR}/Snow_VR_Extract_${date_str}.xlsb"  # Always save with underscores
         
         log "Checking: $filename"
+        log "Full URL: $full_url"
         
-        # Try to download with curl and NTLM auth
-        if curl -s -f -u "${USERNAME}:${PASSWORD}" --ntlm \
-           -o "$output_path" "$full_url" > /dev/null 2>&1; then
+        # Test if file exists
+        http_code=$(curl -s -o /dev/null -w "%{http_code}" -u "${USERNAME}:${PASSWORD}" --ntlm -I "$full_url")
+        log "HTTP Response: $http_code"
+        
+        if [ "$http_code" -eq 200 ]; then
+            log "✅ File exists! Downloading..."
             
-            # Verify file was actually downloaded (not an error page)
-            file_size=$(stat -c%s "$output_path" 2>/dev/null || echo 0)
-            if [ "$file_size" -gt 10000 ]; then  # Assuming real file > 10KB
-                log "✅ SUCCESS: Downloaded $filename ($((file_size/1024/1024)) MB)"
-                echo "$filename"
-                return 0
+            # Download the file
+            if curl -f -u "${USERNAME}:${PASSWORD}" --ntlm -o "$output_path" "$full_url"; then
+                file_size=$(stat -c%s "$output_path" 2>/dev/null || echo 0)
+                
+                if [ "$file_size" -gt 10000 ]; then
+                    log "🎉 SUCCESS: Downloaded $filename"
+                    log "📁 Saved as: $output_path"
+                    log "📊 Size: $((file_size / 1024 / 1024)) MB"
+                    
+                    echo ""
+                    echo "✅ Download completed!"
+                    echo "📁 File: $output_path"
+                    echo "📊 Size: $((file_size / 1024 / 1024)) MB"
+                    exit 0
+                else
+                    log "❌ File too small, likely failed"
+                    rm -f "$output_path"
+                fi
             else
-                rm -f "$output_path"
-                log "File too small, likely an error page"
+                log "❌ Download failed"
             fi
         fi
     done
-    
-    log "❌ ERROR: No valid Snow_VR_Extract file found in the last 7 days"
-    return 1
-}
+done
 
-# Main execution
-main() {
-    log "Starting SharePoint download with NTLM authentication"
-    
-    latest_file=$(find_latest_file)
-    if [ $? -eq 0 ]; then
-        log "Download completed: $latest_file"
-    else
-        log "Download failed"
-        exit 1
-    fi
-}
-
-main
+log "❌ No file found in the last 7 days"
+echo "❌ No file found in the last 7 days"
+exit 1
