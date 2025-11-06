@@ -1,10 +1,10 @@
 const ExcelJS = require('exceljs');
 
-async function loadAndFilterExcel() {
+async function loadAndFilterXLSB() {
     try {
-        // Load the workbook
+        // Load the binary workbook
         const workbook = new ExcelJS.Workbook();
-        await workbook.xlsx.readFile('your_file.xlsx');
+        await workbook.xlsx.readFile('your_file.xlsb');
         
         // Get the first worksheet
         const worksheet = workbook.getWorksheet(1);
@@ -37,9 +37,9 @@ async function loadAndFilterExcel() {
         return filteredData;
         
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error reading .xlsb file:', error);
     }
 }
 
 // Run the function
-loadAndFilterExcel();
+loadAndFilterXLSB();
