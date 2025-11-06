@@ -1,4 +1,5 @@
 const XLSX = require('xlsx');
+const fs = require('fs');
 
 // Hardcoded filters for three columns (adjust these as needed)
 const HARDCODED_FILTERS = {
@@ -23,8 +24,12 @@ function main() {
         process.exit(1);
     }
     
+    // Create filename from user value (remove spaces and special characters)
+    const baseFilename = userValue.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
+    
     console.log('🚀 Starting XLSB Filter...\n');
     console.log(`📝 User provided filter value: "${userValue}"`);
+    console.log(`📁 Base filename: "${baseFilename}"`);
     
     // Combine hardcoded filters with user-provided filter
     const allFilters = {
@@ -41,8 +46,14 @@ function main() {
     );
     
     if (results.length > 0) {
+        // Save both formats
+        saveAsXLSX(results, baseFilename);
+        saveAsJSON(results, baseFilename);
+        
         console.log(`\n🎉 Success! Found ${results.length} matching records.`);
-        console.log('📁 Results saved to: filter.xlsx');
+        console.log('📁 Results saved to:');
+        console.log(`   - ${baseFilename}.xlsx`);
+        console.log(`   - ${baseFilename}.json`);
         console.log('📊 Output columns:', OUTPUT_COLUMNS.length, 'columns');
     } else {
         console.log('\n❌ No matching records found with the specified filters.');
@@ -107,20 +118,37 @@ function filterXLSBWithSelectedColumns(filePath, filters, outputColumns) {
             return selectedRow;
         });
         
-        // Save to filter.xlsx with only selected columns
-        if (outputData.length > 0) {
-            const newWorkbook = XLSX.utils.book_new();
-            const newWorksheet = XLSX.utils.json_to_sheet(outputData);
-            XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Filtered_Data');
-            XLSX.writeFile(newWorkbook, 'filter.xlsx');
-            console.log('✅ Filtered results saved to filter.xlsx');
-        }
-        
         return outputData;
         
     } catch (error) {
         console.error('Error:', error.message);
         return [];
+    }
+}
+
+function saveAsXLSX(data, filename) {
+    if (data.length === 0) return;
+    
+    try {
+        const newWorkbook = XLSX.utils.book_new();
+        const newWorksheet = XLSX.utils.json_to_sheet(data);
+        XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Filtered_Data');
+        XLSX.writeFile(newWorkbook, `${filename}.xlsx`);
+        console.log(`✅ XLSX saved: ${filename}.xlsx`);
+    } catch (error) {
+        console.error('❌ Error saving XLSX:', error.message);
+    }
+}
+
+function saveAsJSON(data, filename) {
+    if (data.length === 0) return;
+    
+    try {
+        const jsonContent = JSON.stringify(data, null, 2);
+        fs.writeFileSync(`${filename}.json`, jsonContent, 'utf8');
+        console.log(`✅ JSON saved: ${filename}.json`);
+    } catch (error) {
+        console.error('❌ Error saving JSON:', error.message);
     }
 }
 
