@@ -3,9 +3,8 @@ const fs = require('fs');
 
 // Hardcoded filters for three columns (adjust these as needed)
 const HARDCODED_FILTERS = {
-    'Column2': 'HardcodedValue2',  // Your 2nd column filter
-    'Column3': 'HardcodedValue3',  // Your 3rd column filter
-    'Column4': 'HardcodedValue4'   // Your 4th column filter
+    'Priority': ['High', 'Critical'],  // Your 2nd column filter
+    'VA State': 'Open'                 // Your 3rd column filter
 };
 
 // Hardcoded output columns (adjust these to your 9 desired columns)
@@ -20,16 +19,16 @@ function main() {
     
     if (!userValue) {
         console.error('❌ Usage: node filter-script.js <filter-value>');
-        console.error('Example: node filter-script.js "IT"');
+        console.error('Example: node filter-script.js "Red Hat Developer Hub"');
         process.exit(1);
     }
     
-    // Create filename from user value (remove spaces and special characters)
-    const baseFilename = userValue.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
+    // Create filename by removing blank spaces
+    const fileName = userValue.replace(/\s+/g, '');
     
     console.log('🚀 Starting XLSB Filter...\n');
     console.log(`📝 User provided filter value: "${userValue}"`);
-    console.log(`📁 Base filename: "${baseFilename}"`);
+    console.log(`📁 Base filename: "${fileName}"`);
     
     // Combine hardcoded filters with user-provided filter
     const allFilters = {
@@ -42,25 +41,20 @@ function main() {
     const results = filterXLSBWithSelectedColumns(
         'your_file.xlsb',  // Your file path
         allFilters,
-        OUTPUT_COLUMNS
+        OUTPUT_COLUMNS,
+        fileName
     );
     
     if (results.length > 0) {
-        // Save both formats
-        saveAsXLSX(results, baseFilename);
-        saveAsJSON(results, baseFilename);
-        
         console.log(`\n🎉 Success! Found ${results.length} matching records.`);
-        console.log('📁 Results saved to:');
-        console.log(`   - ${baseFilename}.xlsx`);
-        console.log(`   - ${baseFilename}.json`);
+        console.log(`📁 Results saved to: ${fileName}.xlsx and ${fileName}.json`);
         console.log('📊 Output columns:', OUTPUT_COLUMNS.length, 'columns');
     } else {
         console.log('\n❌ No matching records found with the specified filters.');
     }
 }
 
-function filterXLSBWithSelectedColumns(filePath, filters, outputColumns) {
+function filterXLSBWithSelectedColumns(filePath, filters, outputColumns, fileName) {
     try {
         console.log('\n📂 Loading .xlsb file...');
         const workbook = XLSX.readFile(filePath);
@@ -118,37 +112,25 @@ function filterXLSBWithSelectedColumns(filePath, filters, outputColumns) {
             return selectedRow;
         });
         
+        // Save to both XLSX and JSON files
+        if (outputData.length > 0) {
+            // Save as XLSX
+            const newWorkbook = XLSX.utils.book_new();
+            const newWorksheet = XLSX.utils.json_to_sheet(outputData);
+            XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Filtered_Data');
+            XLSX.writeFile(newWorkbook, `${fileName}.xlsx`);
+            console.log(`✅ Excel file saved to: ${fileName}.xlsx`);
+            
+            // Save as JSON
+            fs.writeFileSync(`${fileName}.json`, JSON.stringify(outputData, null, 2));
+            console.log(`✅ JSON file saved to: ${fileName}.json`);
+        }
+        
         return outputData;
         
     } catch (error) {
         console.error('Error:', error.message);
         return [];
-    }
-}
-
-function saveAsXLSX(data, filename) {
-    if (data.length === 0) return;
-    
-    try {
-        const newWorkbook = XLSX.utils.book_new();
-        const newWorksheet = XLSX.utils.json_to_sheet(data);
-        XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Filtered_Data');
-        XLSX.writeFile(newWorkbook, `${filename}.xlsx`);
-        console.log(`✅ XLSX saved: ${filename}.xlsx`);
-    } catch (error) {
-        console.error('❌ Error saving XLSX:', error.message);
-    }
-}
-
-function saveAsJSON(data, filename) {
-    if (data.length === 0) return;
-    
-    try {
-        const jsonContent = JSON.stringify(data, null, 2);
-        fs.writeFileSync(`${filename}.json`, jsonContent, 'utf8');
-        console.log(`✅ JSON saved: ${filename}.json`);
-    } catch (error) {
-        console.error('❌ Error saving JSON:', error.message);
     }
 }
 
