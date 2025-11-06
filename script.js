@@ -1,138 +1,162 @@
-const XLSX = require('xlsx');
+const express = require('express');
 const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
-// Hardcoded filters for three columns (adjust these as needed)
-const HARDCODED_FILTERS = {
-    'Priority': ['High', 'Critical'],  // Your 2nd column filter
-    'VA State': 'Open'                 // Your 3rd column filter
-};
+const app = express();
+const PORT = 3000;
 
-// Hardcoded output columns (adjust these to your 9 desired columns)
-const OUTPUT_COLUMNS = [
-    'Column1', 'Column2', 'Column3', 'Column4', 'Column5',
-    'Column6', 'Column7', 'Column8', 'Column9'
-];
+// Middleware to parse JSON requests and enable CORS
+app.use(express.json());
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
 
-function main() {
-    // Get command line argument for the dynamic filter
-    const userValue = process.argv[2];
+// Serve JSON file content based on filename parameter
+app.get('/json/:filename', (req, res) => {
+    const filename = req.params.filename;
     
-    if (!userValue) {
-        console.error('❌ Usage: node filter-script.js <filter-value>');
-        console.error('Example: node filter-script.js "Red Hat Developer Hub"');
-        process.exit(1);
+    // Security: Only allow alphanumeric filenames
+    if (!/^[a-zA-Z0-9_-]+$/.test(filename)) {
+        return res.status(400).json({
+            error: 'Invalid filename. Only alphanumeric characters, hyphens, and underscores are allowed.'
+        });
     }
     
-    // Create filename by removing blank spaces
-    const fileName = userValue.replace(/\s+/g, '');
+    const filePath = path.join(__dirname, `${filename}.json`);
     
-    console.log('🚀 Starting XLSB Filter...\n');
-    console.log(`📝 User provided filter value: "${userValue}"`);
-    console.log(`📁 Base filename: "${fileName}"`);
-    
-    // Combine hardcoded filters with user-provided filter
-    const allFilters = {
-        'Column1': userValue,  // User value for Column1
-        ...HARDCODED_FILTERS   // Spread the hardcoded filters
-    };
-    
-    console.log('🎯 All filters being applied:', allFilters);
-    
-    const results = filterXLSBWithSelectedColumns(
-        'your_file.xlsb',  // Your file path
-        allFilters,
-        OUTPUT_COLUMNS,
-        fileName
-    );
-    
-    if (results.length > 0) {
-        console.log(`\n🎉 Success! Found ${results.length} matching records.`);
-        console.log(`📁 Results saved to: ${fileName}.xlsx and ${fileName}.json`);
-        console.log('📊 Output columns:', OUTPUT_COLUMNS.length, 'columns');
-    } else {
-        console.log('\n❌ No matching records found with the specified filters.');
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({
+            error: `File '${filename}.json' not found.`,
+            availableFiles: getAvailableJsonFiles()
+        });
     }
-}
-
-function filterXLSBWithSelectedColumns(filePath, filters, outputColumns, fileName) {
+    
     try {
-        console.log('\n📂 Loading .xlsb file...');
-        const workbook = XLSX.readFile(filePath);
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const data = XLSX.utils.sheet_to_json(worksheet);
+        // Read and parse JSON file
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+        const jsonData = JSON.parse(fileContent);
         
-        console.log('Total rows loaded:', data.length);
-        
-        if (data.length === 0) return [];
-        
-        const allColumns = Object.keys(data[0]);
-        console.log('All available columns:', allColumns.length, 'columns');
-        
-        // Validate output columns
-        const validOutputColumns = outputColumns.filter(col => allColumns.includes(col));
-        const invalidOutputColumns = outputColumns.filter(col => !allColumns.includes(col));
-        
-        if (invalidOutputColumns.length > 0) {
-            console.warn(`⚠️  These output columns not found: ${invalidOutputColumns.join(', ')}`);
-        }
-        
-        if (validOutputColumns.length === 0) {
-            console.error('❌ No valid output columns specified!');
-            return [];
-        }
-        
-        // Apply filters
-        const filteredData = data.filter(row => {
-            for (const [column, value] of Object.entries(filters)) {
-                if (!value) continue;
-                
-                if (Array.isArray(value)) {
-                    const matchFound = value.some(val => 
-                        String(row[column]).toLowerCase() === String(val).toLowerCase()
-                    );
-                    if (!matchFound) return false;
-                } else {
-                    if (String(row[column]).toLowerCase() !== String(value).toLowerCase()) {
-                        return false;
-                    }
-                }
-            }
-            return true;
+        // Send JSON response
+        res.json({
+            success: true,
+            filename: `${filename}.json`,
+            data: jsonData,
+            recordCount: Array.isArray(jsonData) ? jsonData.length : 1,
+            timestamp: new Date().toISOString()
         });
-        
-        console.log(`Filtered data: ${filteredData.length} rows found`);
-        
-        // Extract only the selected columns for output
-        const outputData = filteredData.map(row => {
-            const selectedRow = {};
-            validOutputColumns.forEach(col => {
-                selectedRow[col] = row[col];
-            });
-            return selectedRow;
-        });
-        
-        // Save to both XLSX and JSON files
-        if (outputData.length > 0) {
-            // Save as XLSX
-            const newWorkbook = XLSX.utils.book_new();
-            const newWorksheet = XLSX.utils.json_to_sheet(outputData);
-            XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Filtered_Data');
-            XLSX.writeFile(newWorkbook, `${fileName}.xlsx`);
-            console.log(`✅ Excel file saved to: ${fileName}.xlsx`);
-            
-            // Save as JSON
-            fs.writeFileSync(`${fileName}.json`, JSON.stringify(outputData, null, 2));
-            console.log(`✅ JSON file saved to: ${fileName}.json`);
-        }
-        
-        return outputData;
         
     } catch (error) {
-        console.error('Error:', error.message);
+        res.status(500).json({
+            error: 'Error reading or parsing JSON file',
+            message: error.message
+        });
+    }
+});
+
+// Helper function to get available JSON files
+function getAvailableJsonFiles() {
+    try {
+        const files = fs.readdirSync(__dirname);
+        return files.filter(file => file.endsWith('.json'));
+    } catch (error) {
         return [];
     }
 }
 
-// Run the script
-main();
+// Get network interfaces
+function getNetworkInfo() {
+    const interfaces = os.networkInterfaces();
+    const addresses = [];
+    
+    Object.keys(interfaces).forEach(iface => {
+        interfaces[iface].forEach(details => {
+            if (details.family === 'IPv4' && !details.internal) {
+                addresses.push({
+                    interface: iface,
+                    address: details.address,
+                    mac: details.mac
+                });
+            }
+        });
+    });
+    
+    return addresses;
+}
+
+// Root endpoint with instructions
+app.get('/', (req, res) => {
+    const availableFiles = getAvailableJsonFiles();
+    const networkInfo = getNetworkInfo();
+    
+    res.json({
+        message: 'JSON File Server is running!',
+        server: {
+            port: PORT,
+            hostname: os.hostname(),
+            networkInterfaces: networkInfo
+        },
+        usage: 'GET /json/:filename (without .json extension)',
+        example: `http://[server-ip]:${PORT}/json/file`,
+        availableFiles: availableFiles,
+        endpoints: {
+            '/json/:filename': 'Get content of specific JSON file',
+            '/files': 'List all available JSON files',
+            '/network': 'Get server network information'
+        }
+    });
+});
+
+// Endpoint to list all available JSON files
+app.get('/files', (req, res) => {
+    const availableFiles = getAvailableJsonFiles();
+    
+    res.json({
+        availableFiles: availableFiles,
+        count: availableFiles.length
+    });
+});
+
+// Endpoint to get network information
+app.get('/network', (req, res) => {
+    res.json({
+        hostname: os.hostname(),
+        networkInterfaces: getNetworkInfo(),
+        serverTime: new Date().toISOString()
+    });
+});
+
+// Handle preflight requests
+app.options('*', (req, res) => {
+    res.sendStatus(200);
+});
+
+// Start server on all available IPs
+const server = app.listen(PORT, '0.0.0.0', () => {
+    const networkInfo = getNetworkInfo();
+    
+    console.log(`🚀 JSON Server running on port ${PORT}`);
+    console.log(`🌐 Accessible from any IP address on the network`);
+    console.log(`📡 Network Interfaces:`);
+    
+    networkInfo.forEach(net => {
+        console.log(`   - ${net.interface}: http://${net.address}:${PORT}`);
+    });
+    
+    console.log(`\n📁 Available JSON files: ${getAvailableJsonFiles().join(', ')}`);
+    console.log(`💡 Usage: GET http://[server-ip]:${PORT}/json/filename`);
+    console.log(`🔧 Example: curl http://${networkInfo[0]?.address || 'localhost'}:${PORT}/json/file`);
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+    console.log('\n🛑 Shutting down server...');
+    server.close(() => {
+        console.log('✅ Server closed');
+        process.exit(0);
+    });
+});
