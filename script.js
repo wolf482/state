@@ -1,52 +1,98 @@
 const XLSX = require('xlsx');
+const readline = require('readline');
 
-function loadAndFilterXLSB() {
+function createInterface() {
+    return readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+}
+
+async function interactiveXLSBFilter() {
+    const rl = createInterface();
+    
     try {
+        const filePath = 'your_file.xlsb'; // Change to your file path
+        
         console.log('Loading .xlsb file...');
+        const workbook = XLSX.readFile(filePath);
         
-        // Load the binary workbook
-        const workbook = XLSX.readFile('your_file.xlsb');
-        
-        // Check available sheets
-        console.log('Available sheets:', workbook.SheetNames);
-        
-        // Get the first sheet
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        
-        if (!worksheet) {
-            throw new Error('Worksheet is undefined - file may be empty or corrupted');
+        if (workbook.SheetNames.length === 0) {
+            console.log('No sheets found in the workbook');
+            return;
         }
         
-        // Convert to JSON
+        // Let user choose sheet if multiple exist
+        let sheetName;
+        if (workbook.SheetNames.length > 1) {
+            console.log('\nAvailable sheets:');
+            workbook.SheetNames.forEach((name, index) => {
+                console.log(`${index + 1}. ${name}`);
+            });
+            
+            const sheetChoice = await askQuestion(rl, '\nSelect sheet (number): ');
+            sheetName = workbook.SheetNames[parseInt(sheetChoice) - 1];
+        } else {
+            sheetName = workbook.SheetNames[0];
+        }
+        
+        console.log(`Using sheet: ${sheetName}`);
+        
+        const worksheet = workbook.Sheets[sheetName];
         const data = XLSX.utils.sheet_to_json(worksheet);
         
-        console.log('Total rows loaded:', data.length);
-        
         if (data.length === 0) {
-            console.log('No data found in the file');
-            return [];
+            console.log('No data found in the selected sheet');
+            return;
         }
         
-        // Show column names
+        console.log(`\nLoaded ${data.length} rows`);
         console.log('Available columns:', Object.keys(data[0]));
         
-        // Filter example - adjust these values
-        const columnToFilter = 'Column1'; // Change to your column name
-        const valueToFilter = 'specific_value'; // Change to your filter value
+        // Get filter criteria
+        const columnName = await askQuestion(rl, '\nEnter column name to filter by: ');
+        const filterValue = await askQuestion(rl, 'Enter value to filter for: ');
         
-        const filteredData = data.filter(row => row[columnToFilter] === valueToFilter);
+        // Check if column exists
+        if (!data[0].hasOwnProperty(columnName)) {
+            console.log(`Column '${columnName}' not found in the data`);
+            return;
+        }
         
-        console.log(`Filtered data (${columnToFilter} = ${valueToFilter}):`, filteredData.length, 'rows');
-        console.log(filteredData);
+        // Filter data
+        const filteredData = data.filter(row => {
+            return String(row[columnName]) === String(filterValue);
+        });
         
-        return filteredData;
+        console.log(`\nFound ${filteredData.length} matching records`);
+        
+        if (filteredData.length > 0) {
+            console.log('\nFirst few results:');
+            console.table(filteredData.slice(0, 5));
+            
+            // Option to save
+            const save = await askQuestion(rl, '\nSave results to new file? (y/n): ');
+            if (save.toLowerCase() === 'y') {
+                const newWorkbook = XLSX.utils.book_new();
+                const newWorksheet = XLSX.utils.json_to_sheet(filteredData);
+                XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Filtered_Data');
+                XLSX.writeFile(newWorkbook, 'filtered_results.xlsx');
+                console.log('Results saved to filtered_results.xlsx');
+            }
+        }
         
     } catch (error) {
-        console.error('Error reading .xlsb file:', error.message);
-        return [];
+        console.error('Error:', error.message);
+    } finally {
+        rl.close();
     }
 }
 
+function askQuestion(rl, question) {
+    return new Promise((resolve) => {
+        rl.question(question, resolve);
+    });
+}
+
 // Run the function
-loadAndFilterXLSB();
+interactiveXLSBFilter();
