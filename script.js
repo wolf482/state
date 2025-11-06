@@ -1,6 +1,6 @@
 const XLSX = require('xlsx');
 
-function filterXLSBWithMultipleColumns(filePath, filters) {
+function filterXLSBWithSelectedColumns(filePath, filters, outputColumns) {
     try {
         console.log('Loading .xlsb file...');
         
@@ -28,18 +28,26 @@ function filterXLSBWithMultipleColumns(filePath, filters) {
             return [];
         }
         
-        // Show column names
-        const columns = Object.keys(data[0]);
-        console.log('Available columns:', columns);
+        // Show all column names
+        const allColumns = Object.keys(data[0]);
+        console.log('All available columns:', allColumns);
+        console.log('Selected output columns:', outputColumns);
         
         // Validate that filter columns exist in the data
         const filterColumns = Object.keys(filters);
         for (const column of filterColumns) {
-            if (!columns.includes(column)) {
-                console.warn(`Warning: Column '${column}' not found in the dataset. Available columns: ${columns.join(', ')}`);
-                // Remove the invalid filter
+            if (!allColumns.includes(column)) {
+                console.warn(`Warning: Filter column '${column}' not found in the dataset.`);
                 delete filters[column];
             }
+        }
+        
+        // Validate that output columns exist
+        const validOutputColumns = outputColumns.filter(col => allColumns.includes(col));
+        const invalidOutputColumns = outputColumns.filter(col => !allColumns.includes(col));
+        
+        if (invalidOutputColumns.length > 0) {
+            console.warn(`Warning: These output columns not found: ${invalidOutputColumns.join(', ')}`);
         }
         
         console.log('Applying filters:', filters);
@@ -78,18 +86,28 @@ function filterXLSBWithMultipleColumns(filePath, filters) {
         
         console.log(`Filtered data: ${filteredData.length} rows found`);
         
-        // Save filtered results to filter.xlsx
-        if (filteredData.length > 0) {
+        // Extract only the selected columns for output
+        const outputData = filteredData.map(row => {
+            const selectedRow = {};
+            validOutputColumns.forEach(col => {
+                selectedRow[col] = row[col];
+            });
+            return selectedRow;
+        });
+        
+        // Save filtered results to filter.xlsx with only selected columns
+        if (outputData.length > 0) {
             const newWorkbook = XLSX.utils.book_new();
-            const newWorksheet = XLSX.utils.json_to_sheet(filteredData);
+            const newWorksheet = XLSX.utils.json_to_sheet(outputData);
             XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Filtered_Data');
             XLSX.writeFile(newWorkbook, 'filter.xlsx');
             console.log('✅ Filtered results saved to filter.xlsx');
+            console.log(`📊 Output includes ${validOutputColumns.length} columns:`, validOutputColumns);
         } else {
             console.log('❌ No data matching the filters found. File not saved.');
         }
         
-        return filteredData;
+        return outputData;
         
     } catch (error) {
         console.error('Error reading .xlsb file:', error.message);
@@ -99,26 +117,30 @@ function filterXLSBWithMultipleColumns(filePath, filters) {
 
 // USAGE EXAMPLES:
 
-// Example 1: One column with two values (OR condition), others with single values
-const results1 = filterXLSBWithMultipleColumns('your_file.xlsb', {
-    'Column1': ['Value1', 'Value2'],  // Column1 can be Value1 OR Value2
-    'Column2': 'Value3',              // Column2 must be Value3
-    'Column3': 'Value4',              // Column3 must be Value4
-    'Column4': 'Value5'               // Column4 must be Value5
-});
+// Example 1: Specify which 9 columns to include in output
+const results1 = filterXLSBWithSelectedColumns('your_file.xlsb', 
+    {
+        'Column1': ['Value1', 'Value2'],  // Column1 can be Value1 OR Value2
+        'Column2': 'Value3',              // Column2 must be Value3
+        'Column3': 'Value4',              // Column3 must be Value4
+        'Column4': 'Value5'               // Column4 must be Value5
+    },
+    [ // Specify exactly which 9 columns to include in output
+        'Column1', 'Column2', 'Column3', 'Column4',
+        'Column5', 'Column6', 'Column7', 'Column8', 'Column9'
+    ]
+);
 
-// Example 2: Multiple columns with multiple values
-const results2 = filterXLSBWithMultipleColumns('your_file.xlsb', {
-    'Column1': ['ValueA', 'ValueB'],  // Column1 = ValueA OR ValueB
-    'Column2': ['ValueX', 'ValueY'],  // Column2 = ValueX OR ValueY
-    'Column3': 'SingleValue',         // Column3 must be SingleValue
-    'Column4': ''                     // No filter for Column4
-});
-
-// Example 3: Mixed single and multiple values
-const results3 = filterXLSBWithMultipleColumns('your_file.xlsb', {
-    'Department': ['IT', 'Engineering'],  // Department = IT OR Engineering
-    'Status': 'Active',                   // Status must be Active
-    'Priority': ['High', 'Critical'],     // Priority = High OR Critical
-    'Region': 'North'                     // Region must be North
-});
+// Example 2: Real-world example
+const results2 = filterXLSBWithSelectedColumns('your_file.xlsb',
+    {
+        'Department': ['IT', 'Engineering'],
+        'Status': 'Active',
+        'Priority': ['High', 'Critical'],
+        'Region': 'North'
+    },
+    [ // Only these 9 columns will be in the output file
+        'EmployeeID', 'Name', 'Department', 'Position', 
+        'Salary', 'StartDate', 'Status', 'Region', 'Email'
+    ]
+);
