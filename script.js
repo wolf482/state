@@ -1,41 +1,38 @@
 #!/bin/bash
 
-SHAREPOINT_URL="https://otshare.eur.citi.net"
-FILE_PATH="/sites/SSM/Reports/VTM/SNOW_VR_Extract/Snow_VR_Extract%202025_11_04.xlsb"
+# Working script based on your successful curl command
+
+BASE_PATH="/sites/SSM/Reports/VTM/SNOW_VR_Extract"
 DOWNLOAD_DIR="./downloads"
 
 mkdir -p "$DOWNLOAD_DIR"
 
-full_url="${SHAREPOINT_URL}${FILE_PATH}"
-output_path="${DOWNLOAD_DIR}/Snow_VR_Extract_2025_11_04.xlsb"
+echo "🔍 Searching for latest Snow_VR_Extract file..."
 
-echo "Testing different authentication methods..."
+for days_back in {0..7}; do
+    date_str=$(date -d "$days_back days ago" +%Y_%m_%d)
+    filename="Snow_VR_Extract_${date_str}.xlsb"
+    full_url="${SHAREPOINT_URL}${BASE_PATH}/${filename}"
+    output_path="${DOWNLOAD_DIR}/${filename}"
+    
+    echo "Checking: $filename"
+    
+    # Use the exact curl format that worked for you
+    if curl -u "${USERNAME}:${PASSWORD}" --ntlm --output "$output_path" "$full_url" 2>/dev/null; then
+        file_size=$(stat -c%s "$output_path" 2>/dev/null || echo 0)
+        if [ "$file_size" -gt 10000 ]; then
+            echo "✅ SUCCESS: Downloaded $filename"
+            echo "📁 Location: $output_path"
+            echo "📊 Size: $((file_size / 1024 / 1024)) MB"
+            exit 0
+        else
+            echo "File too small, removing..."
+            rm -f "$output_path"
+        fi
+    else
+        echo "Download failed for this date"
+    fi
+done
 
-# Method 1: NTLM with verbose output
-echo "1. Trying NTLM authentication..."
-curl -v -u "${USERNAME}:${PASSWORD}" --ntlm -o "$output_path" "$full_url"
-
-if [ $? -eq 0 ]; then
-    echo "✅ NTLM worked!"
-    exit 0
-fi
-
-# Method 2: Basic authentication
-echo "2. Trying Basic authentication..."
-curl -v -u "${USERNAME}:${PASSWORD}" --basic -o "$output_path" "$full_url"
-
-if [ $? -eq 0 ]; then
-    echo "✅ Basic auth worked!"
-    exit 0
-fi
-
-# Method 3: Negotiate (Kerberos)
-echo "3. Trying Negotiate authentication..."
-curl -v -u "${USERNAME}:${PASSWORD}" --negotiate -o "$output_path" "$full_url"
-
-if [ $? -eq 0 ]; then
-    echo "✅ Negotiate worked!"
-    exit 0
-fi
-
-echo "❌ All authentication methods failed"
+echo "❌ No file found in the last 7 days"
+exit 1
