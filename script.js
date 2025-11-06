@@ -1,3 +1,29 @@
+
+{
+  "name": "json-file-server",
+  "version": "1.0.0",
+  "description": "Node.js server to serve JSON file content from any network IP",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "keywords": [
+    "json",
+    "server",
+    "express",
+    "api",
+    "network"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
+
+
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
