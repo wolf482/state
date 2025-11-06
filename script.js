@@ -1,80 +1,41 @@
 #!/bin/bash
 
-# Corrected script with the right path
 SHAREPOINT_URL="https://otshare.eur.citi.net"
-SITE_PATH="/sites/SSM/Reports/VTM/SNOW_VR_Extract"
+FILE_PATH="/sites/SSM/Reports/VTM/SNOW_VR_Extract/Snow_VR_Extract%202025_11_04.xlsb"
 DOWNLOAD_DIR="./downloads"
-LOG_FILE="./sharepoint_download.log"
-
-# Clear previous log
-> "$LOG_FILE"
-
-log() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
-}
 
 mkdir -p "$DOWNLOAD_DIR"
 
-log "🚀 Starting SharePoint download with correct path"
-log "📋 Using path: $SITE_PATH"
+full_url="${SHAREPOINT_URL}${FILE_PATH}"
+output_path="${DOWNLOAD_DIR}/Snow_VR_Extract_2025_11_04.xlsb"
 
-echo "🔍 Searching for latest file..."
+echo "Testing different authentication methods..."
 
-for days_back in {0..7}; do
-    date_str=$(date -d "$days_back days ago" +%Y_%m_%d)
-    
-    # Try both filename patterns (with and without space)
-    filenames=(
-        "Snow_VR_Extract_${date_str}.xlsb"
-        "Snow_VR_Extract ${date_str}.xlsb"
-    )
-    
-    for filename in "${filenames[@]}"; do
-        # URL encode spaces if needed
-        if [[ "$filename" == *" "* ]]; then
-            encoded_filename=$(echo "$filename" | sed 's/ /%20/g')
-        else
-            encoded_filename="$filename"
-        fi
-        
-        full_url="${SHAREPOINT_URL}${SITE_PATH}/${encoded_filename}"
-        output_path="${DOWNLOAD_DIR}/Snow_VR_Extract_${date_str}.xlsb"  # Always save with underscores
-        
-        log "Checking: $filename"
-        log "Full URL: $full_url"
-        
-        # Test if file exists
-        http_code=$(curl -s -o /dev/null -w "%{http_code}" -u "${USERNAME}:${PASSWORD}" --ntlm -I "$full_url")
-        log "HTTP Response: $http_code"
-        
-        if [ "$http_code" -eq 200 ]; then
-            log "✅ File exists! Downloading..."
-            
-            # Download the file
-            if curl -f -u "${USERNAME}:${PASSWORD}" --ntlm -o "$output_path" "$full_url"; then
-                file_size=$(stat -c%s "$output_path" 2>/dev/null || echo 0)
-                
-                if [ "$file_size" -gt 10000 ]; then
-                    log "🎉 SUCCESS: Downloaded $filename"
-                    log "📁 Saved as: $output_path"
-                    log "📊 Size: $((file_size / 1024 / 1024)) MB"
-                    
-                    echo ""
-                    echo "✅ Download completed!"
-                    echo "📁 File: $output_path"
-                    echo "📊 Size: $((file_size / 1024 / 1024)) MB"
-                    exit 0
-                else
-                    log "❌ File too small, likely failed"
-                    rm -f "$output_path"
-                fi
-            else
-                log "❌ Download failed"
-            fi
-        fi
-    done
-done
+# Method 1: NTLM with verbose output
+echo "1. Trying NTLM authentication..."
+curl -v -u "${USERNAME}:${PASSWORD}" --ntlm -o "$output_path" "$full_url"
 
-log "❌ No file found in the last 7 days"
-echo "❌ No file found in the last 7 days"
-exit 1
+if [ $? -eq 0 ]; then
+    echo "✅ NTLM worked!"
+    exit 0
+fi
+
+# Method 2: Basic authentication
+echo "2. Trying Basic authentication..."
+curl -v -u "${USERNAME}:${PASSWORD}" --basic -o "$output_path" "$full_url"
+
+if [ $? -eq 0 ]; then
+    echo "✅ Basic auth worked!"
+    exit 0
+fi
+
+# Method 3: Negotiate (Kerberos)
+echo "3. Trying Negotiate authentication..."
+curl -v -u "${USERNAME}:${PASSWORD}" --negotiate -o "$output_path" "$full_url"
+
+if [ $? -eq 0 ]; then
+    echo "✅ Negotiate worked!"
+    exit 0
+fi
+
+echo "❌ All authentication methods failed"
