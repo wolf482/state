@@ -1,29 +1,3 @@
-
-{
-  "name": "json-file-server",
-  "version": "1.0.0",
-  "description": "Node.js server to serve JSON file content from any network IP",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2"
-  },
-  "keywords": [
-    "json",
-    "server",
-    "express",
-    "api",
-    "network"
-  ],
-  "author": "Your Name",
-  "license": "MIT"
-}
-
-
-
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -43,22 +17,51 @@ app.use((req, res, next) => {
 
 // Serve JSON file content based on filename parameter
 app.get('/json/:filename', (req, res) => {
-    const filename = req.params.filename;
+    let filename = req.params.filename;
     
-    // Security: Only allow alphanumeric filenames
-    if (!/^[a-zA-Z0-9_-]+$/.test(filename)) {
+    console.log(`📥 Request for filename: "${filename}"`);
+    
+    // Remove .json extension if user accidentally included it
+    filename = filename.replace(/\.json$/i, '');
+    
+    // More permissive filename validation - allow dots, spaces, and common characters
+    if (!/^[a-zA-Z0-9_\-\.\s]+$/.test(filename)) {
         return res.status(400).json({
-            error: 'Invalid filename. Only alphanumeric characters, hyphens, and underscores are allowed.'
+            error: 'Invalid filename. Only alphanumeric characters, spaces, hyphens, underscores, and dots are allowed.',
+            received: req.params.filename,
+            suggestion: 'Use only letters, numbers, spaces, hyphens, underscores, and dots'
         });
     }
     
-    const filePath = path.join(__dirname, `${filename}.json`);
+    // Try multiple filename variations
+    const possibleFilenames = [
+        `${filename}.json`,
+        `${filename.replace(/\s+/g, '')}.json`, // Remove spaces
+        `${filename.replace(/[^a-zA-Z0-9]/g, '')}.json` // Remove all non-alphanumeric
+    ];
     
-    // Check if file exists
-    if (!fs.existsSync(filePath)) {
+    let filePath = null;
+    let foundFilename = null;
+    
+    // Check which filename variation exists
+    for (const possibleFilename of possibleFilenames) {
+        const testPath = path.join(__dirname, possibleFilename);
+        if (fs.existsSync(testPath)) {
+            filePath = testPath;
+            foundFilename = possibleFilename;
+            break;
+        }
+    }
+    
+    if (!filePath) {
+        const availableFiles = getAvailableJsonFiles();
         return res.status(404).json({
             error: `File '${filename}.json' not found.`,
-            availableFiles: getAvailableJsonFiles()
+            tried: possibleFilenames,
+            availableFiles: availableFiles,
+            suggestion: availableFiles.length > 0 ? 
+                `Try one of: ${availableFiles.map(f => f.replace('.json', '')).join(', ')}` :
+                'No JSON files available'
         });
     }
     
@@ -67,28 +70,51 @@ app.get('/json/:filename', (req, res) => {
         const fileContent = fs.readFileSync(filePath, 'utf8');
         const jsonData = JSON.parse(fileContent);
         
+        console.log(`✅ Serving file: ${foundFilename} (${Array.isArray(jsonData) ? jsonData.length : 1} records)`);
+        
         // Send JSON response
         res.json({
             success: true,
-            filename: `${filename}.json`,
+            filename: foundFilename,
             data: jsonData,
             recordCount: Array.isArray(jsonData) ? jsonData.length : 1,
             timestamp: new Date().toISOString()
         });
         
     } catch (error) {
+        console.error('❌ Error reading file:', error.message);
         res.status(500).json({
             error: 'Error reading or parsing JSON file',
-            message: error.message
+            message: error.message,
+            filename: foundFilename
         });
     }
+});
+
+// New endpoint that lists files in a more accessible way
+app.get('/files/list', (req, res) => {
+    const availableFiles = getAvailableJsonFiles();
+    const fileList = availableFiles.map(file => ({
+        name: file,
+        nameWithoutExtension: file.replace('.json', ''),
+        apiUrl: `/json/${file.replace('.json', '')}`
+    }));
+    
+    res.json({
+        availableFiles: fileList,
+        count: availableFiles.length,
+        usage: 'Use /json/[filename] without .json extension'
+    });
 });
 
 // Helper function to get available JSON files
 function getAvailableJsonFiles() {
     try {
         const files = fs.readdirSync(__dirname);
-        return files.filter(file => file.endsWith('.json'));
+        return files.filter(file => 
+            file.toLowerCase().endsWith('.json') && 
+            !file.includes('package') // Exclude package.json files
+        );
     } catch (error) {
         return [];
     }
@@ -118,6 +144,7 @@ function getNetworkInfo() {
 app.get('/', (req, res) => {
     const availableFiles = getAvailableJsonFiles();
     const networkInfo = getNetworkInfo();
+    const fileExamples = availableFiles.slice(0, 5).map(f => f.replace('.json', ''));
     
     res.json({
         message: 'JSON File Server is running!',
@@ -126,12 +153,15 @@ app.get('/', (req, res) => {
             hostname: os.hostname(),
             networkInterfaces: networkInfo
         },
-        usage: 'GET /json/:filename (without .json extension)',
-        example: `http://[server-ip]:${PORT}/json/file`,
+        usage: {
+            basic: 'GET /json/:filename (without .json extension)',
+            examples: fileExamples.map(f => `http://[server-ip]:${PORT}/json/${f}`),
+            listFiles: `GET http://[server-ip]:${PORT}/files/list`
+        },
         availableFiles: availableFiles,
         endpoints: {
             '/json/:filename': 'Get content of specific JSON file',
-            '/files': 'List all available JSON files',
+            '/files/list': 'List all available JSON files with API URLs',
             '/network': 'Get server network information'
         }
     });
@@ -143,7 +173,8 @@ app.get('/files', (req, res) => {
     
     res.json({
         availableFiles: availableFiles,
-        count: availableFiles.length
+        count: availableFiles.length,
+        fileNames: availableFiles.map(f => f.replace('.json', ''))
     });
 });
 
@@ -164,6 +195,7 @@ app.options('*', (req, res) => {
 // Start server on all available IPs
 const server = app.listen(PORT, '0.0.0.0', () => {
     const networkInfo = getNetworkInfo();
+    const availableFiles = getAvailableJsonFiles();
     
     console.log(`🚀 JSON Server running on port ${PORT}`);
     console.log(`🌐 Accessible from any IP address on the network`);
@@ -173,9 +205,19 @@ const server = app.listen(PORT, '0.0.0.0', () => {
         console.log(`   - ${net.interface}: http://${net.address}:${PORT}`);
     });
     
-    console.log(`\n📁 Available JSON files: ${getAvailableJsonFiles().join(', ')}`);
-    console.log(`💡 Usage: GET http://[server-ip]:${PORT}/json/filename`);
-    console.log(`🔧 Example: curl http://${networkInfo[0]?.address || 'localhost'}:${PORT}/json/file`);
+    console.log(`\n📁 Available JSON files: ${availableFiles.length}`);
+    availableFiles.forEach(file => {
+        console.log(`   📄 ${file} -> /json/${file.replace('.json', '')}`);
+    });
+    
+    console.log(`\n💡 Usage Examples:`);
+    if (availableFiles.length > 0) {
+        availableFiles.slice(0, 3).forEach(file => {
+            const name = file.replace('.json', '');
+            console.log(`   curl http://${networkInfo[0]?.address || 'localhost'}:${PORT}/json/${name}`);
+        });
+    }
+    console.log(`   curl http://${networkInfo[0]?.address || 'localhost'}:${PORT}/files/list`);
 });
 
 // Graceful shutdown
