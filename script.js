@@ -1,230 +1,313 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-
-const app = express();
-const PORT = 3000;
-
-// Middleware to parse JSON requests and enable CORS
-app.use(express.json());
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    next();
-});
-
-// Serve JSON file content based on filename parameter
-app.get('/json/:filename', (req, res) => {
-    let filename = req.params.filename;
-    
-    console.log(`📥 Request for filename: "${filename}"`);
-    
-    // Remove .json extension if user accidentally included it
-    filename = filename.replace(/\.json$/i, '');
-    
-    // More permissive filename validation - allow dots, spaces, and common characters
-    if (!/^[a-zA-Z0-9_\-\.\s]+$/.test(filename)) {
-        return res.status(400).json({
-            error: 'Invalid filename. Only alphanumeric characters, spaces, hyphens, underscores, and dots are allowed.',
-            received: req.params.filename,
-            suggestion: 'Use only letters, numbers, spaces, hyphens, underscores, and dots'
-        });
-    }
-    
-    // Try multiple filename variations
-    const possibleFilenames = [
-        `${filename}.json`,
-        `${filename.replace(/\s+/g, '')}.json`, // Remove spaces
-        `${filename.replace(/[^a-zA-Z0-9]/g, '')}.json` // Remove all non-alphanumeric
-    ];
-    
-    let filePath = null;
-    let foundFilename = null;
-    
-    // Check which filename variation exists
-    for (const possibleFilename of possibleFilenames) {
-        const testPath = path.join(__dirname, possibleFilename);
-        if (fs.existsSync(testPath)) {
-            filePath = testPath;
-            foundFilename = possibleFilename;
-            break;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Data Viewer for Confluence</title>
+    <style>
+        /* ... (keep the same styles as before) ... */
+        .file-list {
+            background: #f8f9fa;
+            border: 1px solid #dfe1e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
         }
-    }
-    
-    if (!filePath) {
-        const availableFiles = getAvailableJsonFiles();
-        return res.status(404).json({
-            error: `File '${filename}.json' not found.`,
-            tried: possibleFilenames,
-            availableFiles: availableFiles,
-            suggestion: availableFiles.length > 0 ? 
-                `Try one of: ${availableFiles.map(f => f.replace('.json', '')).join(', ')}` :
-                'No JSON files available'
-        });
-    }
-    
-    try {
-        // Read and parse JSON file
-        const fileContent = fs.readFileSync(filePath, 'utf8');
-        const jsonData = JSON.parse(fileContent);
+        .file-item {
+            padding: 5px 10px;
+            margin: 2px 0;
+            background: white;
+            border-radius: 3px;
+            cursor: pointer;
+            border: 1px solid #dfe1e6;
+        }
+        .file-item:hover {
+            background: #deebff;
+            border-color: #4c9aff;
+        }
+        .suggestion {
+            color: #0052cc;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 JSON Data Viewer for Confluence</h1>
         
-        console.log(`✅ Serving file: ${foundFilename} (${Array.isArray(jsonData) ? jsonData.length : 1} records)`);
-        
-        // Send JSON response
-        res.json({
-            success: true,
-            filename: foundFilename,
-            data: jsonData,
-            recordCount: Array.isArray(jsonData) ? jsonData.length : 1,
-            timestamp: new Date().toISOString()
-        });
-        
-    } catch (error) {
-        console.error('❌ Error reading file:', error.message);
-        res.status(500).json({
-            error: 'Error reading or parsing JSON file',
-            message: error.message,
-            filename: foundFilename
-        });
-    }
-});
+        <div class="controls">
+            <div class="input-group">
+                <label for="serverUrl">Server URL:</label>
+                <input type="text" id="serverUrl" placeholder="http://your-server-ip:3000" value="http://10.226.202.16:3000">
+                <button onclick="refreshFileList()">Refresh Files</button>
+            </div>
+            
+            <div class="input-group">
+                <label for="filename">JSON Filename (without .json extension):</label>
+                <input type="text" id="filename" placeholder="RedHatBuildofkeycloak">
+                <button onclick="loadData()">Load Data</button>
+                <button class="copy-button" onclick="copyConfluenceMarkup()" id="copyButton">Copy Confluence Markup</button>
+            </div>
 
-// New endpoint that lists files in a more accessible way
-app.get('/files/list', (req, res) => {
-    const availableFiles = getAvailableJsonFiles();
-    const fileList = availableFiles.map(file => ({
-        name: file,
-        nameWithoutExtension: file.replace('.json', ''),
-        apiUrl: `/json/${file.replace('.json', '')}`
-    }));
-    
-    res.json({
-        availableFiles: fileList,
-        count: availableFiles.length,
-        usage: 'Use /json/[filename] without .json extension'
-    });
-});
+            <div id="fileListContainer" style="display: none;">
+                <label>Available Files (click to load):</label>
+                <div id="fileList" class="file-list"></div>
+            </div>
+        </div>
 
-// Helper function to get available JSON files
-function getAvailableJsonFiles() {
-    try {
-        const files = fs.readdirSync(__dirname);
-        return files.filter(file => 
-            file.toLowerCase().endsWith('.json') && 
-            !file.includes('package') // Exclude package.json files
-        );
-    } catch (error) {
-        return [];
-    }
-}
+        <div id="status" class="status"></div>
 
-// Get network interfaces
-function getNetworkInfo() {
-    const interfaces = os.networkInterfaces();
-    const addresses = [];
-    
-    Object.keys(interfaces).forEach(iface => {
-        interfaces[iface].forEach(details => {
-            if (details.family === 'IPv4' && !details.internal) {
-                addresses.push({
-                    interface: iface,
-                    address: details.address,
-                    mac: details.mac
+        <div id="loading" class="loading" style="display: none;">
+            🔄 Loading data from server...
+        </div>
+
+        <div id="results">
+            <div id="tableContainer" class="table-container" style="display: none;">
+                <h3>Data Preview</h3>
+                <table id="dataTable">
+                    <thead id="tableHeader"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+            
+            <div id="noData" style="text-align: center; padding: 40px; color: #666;">
+                No data loaded. Enter a filename and click "Load Data", or select from available files.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentData = null;
+        let availableFiles = [];
+
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => status.style.display = 'none', 5000);
+            }
+        }
+
+        function hideStatus() {
+            document.getElementById('status').style.display = 'none';
+        }
+
+        async function refreshFileList() {
+            const serverUrl = document.getElementById('serverUrl').value.trim();
+            
+            if (!serverUrl) {
+                showStatus('Please enter server URL first', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${serverUrl}/files/list`);
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Failed to fetch file list');
+                }
+
+                availableFiles = result.availableFiles || [];
+                displayFileList(availableFiles);
+                showStatus(`📁 Found ${availableFiles.length} JSON files`, 'success');
+
+            } catch (error) {
+                showStatus(`❌ Error loading file list: ${error.message}`, 'error');
+                document.getElementById('fileListContainer').style.display = 'none';
+            }
+        }
+
+        function displayFileList(files) {
+            const fileListContainer = document.getElementById('fileListContainer');
+            const fileListElement = document.getElementById('fileList');
+            
+            if (files.length === 0) {
+                fileListContainer.style.display = 'none';
+                return;
+            }
+
+            fileListElement.innerHTML = files.map(file => 
+                `<div class="file-item" onclick="loadFile('${file.nameWithoutExtension}')">
+                    📄 ${file.nameWithoutExtension}
+                </div>`
+            ).join('');
+
+            fileListContainer.style.display = 'block';
+        }
+
+        function loadFile(filename) {
+            document.getElementById('filename').value = filename;
+            loadData();
+        }
+
+        async function loadData() {
+            const serverUrl = document.getElementById('serverUrl').value.trim();
+            const filename = document.getElementById('filename').value.trim();
+            
+            if (!serverUrl || !filename) {
+                showStatus('Please enter both server URL and filename', 'error');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('tableContainer').style.display = 'none';
+            document.getElementById('noData').style.display = 'none';
+            hideStatus();
+
+            try {
+                const response = await fetch(`${serverUrl}/json/${encodeURIComponent(filename)}`);
+                const result = await response.json();
+
+                if (!response.ok) {
+                    // Check if there are suggestions in the error response
+                    if (result.availableFiles && result.availableFiles.length > 0) {
+                        const suggestion = result.availableFiles[0].replace('.json', '');
+                        throw new Error(`${result.error}. Did you mean "${suggestion}"?`);
+                    }
+                    throw new Error(result.error || 'Failed to fetch data');
+                }
+
+                if (result.success) {
+                    currentData = result.data;
+                    displayData(currentData);
+                    showStatus(`✅ Loaded ${result.recordCount} records from ${result.filename}`, 'success');
+                } else {
+                    throw new Error(result.error || 'Unknown error');
+                }
+
+            } catch (error) {
+                showStatus(`❌ Error: ${error.message}`, 'error');
+                document.getElementById('tableContainer').style.display = 'none';
+                document.getElementById('noData').style.display = 'block';
+                
+                // Auto-refresh file list on error
+                refreshFileList();
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function displayData(data) {
+            if (!data || (Array.isArray(data) && data.length === 0)) {
+                document.getElementById('tableContainer').style.display = 'none';
+                document.getElementById('noData').style.display = 'block';
+                return;
+            }
+
+            const tableData = Array.isArray(data) ? data : [data];
+            const headers = Object.keys(tableData[0]);
+
+            // Build table header
+            const tableHeader = document.getElementById('tableHeader');
+            tableHeader.innerHTML = '<tr>' + headers.map(header => 
+                `<th>${header}</th>`
+            ).join('') + '</tr>';
+
+            // Build table body
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = tableData.map(row => {
+                return '<tr>' + headers.map(header => {
+                    let value = row[header] || '';
+                    let className = '';
+                    
+                    // Add styling based on content
+                    if (header === 'Priority') {
+                        if (value.toLowerCase().includes('high') || value.toLowerCase().includes('critical')) {
+                            className = 'priority-high';
+                        } else if (value.toLowerCase().includes('medium')) {
+                            className = 'priority-medium';
+                        } else if (value.toLowerCase().includes('low')) {
+                            className = 'priority-low';
+                        }
+                    } else if (header === 'VA State') {
+                        if (value.toLowerCase().includes('open')) {
+                            className = 'va-open';
+                        } else if (value.toLowerCase().includes('closed')) {
+                            className = 'va-closed';
+                        }
+                    }
+                    
+                    return `<td class="${className}">${value}</td>`;
+                }).join('') + '</tr>';
+            }).join('');
+
+            document.getElementById('tableContainer').style.display = 'block';
+            document.getElementById('noData').style.display = 'none';
+        }
+
+        function generateConfluenceMarkup() {
+            if (!currentData) return '';
+
+            const data = Array.isArray(currentData) ? currentData : [currentData];
+            const headers = Object.keys(data[0]);
+
+            let markup = '{table}\n';
+            
+            // Header row
+            markup += '| ' + headers.join(' | ') + ' |\n';
+            
+            // Data rows
+            data.forEach(row => {
+                const rowData = headers.map(header => {
+                    let value = row[header] || '';
+                    // Escape pipes for Confluence
+                    value = String(value).replace(/\|/g, '\\|');
+                    return value;
                 });
+                markup += '| ' + rowData.join(' | ') + ' |\n';
+            });
+            
+            markup += '{table}';
+            return markup;
+        }
+
+        function copyConfluenceMarkup() {
+            if (!currentData) {
+                showStatus('No data loaded to copy', 'error');
+                return;
+            }
+
+            const markup = generateConfluenceMarkup();
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(markup).then(() => {
+                showStatus('✅ Confluence markup copied to clipboard!', 'success');
+            }).catch(err => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = markup;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showStatus('✅ Confluence markup copied to clipboard!', 'success');
+            });
+        }
+
+        // Allow Enter key to trigger load
+        document.getElementById('filename').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loadData();
             }
         });
-    });
-    
-    return addresses;
-}
 
-// Root endpoint with instructions
-app.get('/', (req, res) => {
-    const availableFiles = getAvailableJsonFiles();
-    const networkInfo = getNetworkInfo();
-    const fileExamples = availableFiles.slice(0, 5).map(f => f.replace('.json', ''));
-    
-    res.json({
-        message: 'JSON File Server is running!',
-        server: {
-            port: PORT,
-            hostname: os.hostname(),
-            networkInterfaces: networkInfo
-        },
-        usage: {
-            basic: 'GET /json/:filename (without .json extension)',
-            examples: fileExamples.map(f => `http://[server-ip]:${PORT}/json/${f}`),
-            listFiles: `GET http://[server-ip]:${PORT}/files/list`
-        },
-        availableFiles: availableFiles,
-        endpoints: {
-            '/json/:filename': 'Get content of specific JSON file',
-            '/files/list': 'List all available JSON files with API URLs',
-            '/network': 'Get server network information'
-        }
-    });
-});
+        // Auto-refresh file list when server URL changes
+        document.getElementById('serverUrl').addEventListener('change', refreshFileList);
 
-// Endpoint to list all available JSON files
-app.get('/files', (req, res) => {
-    const availableFiles = getAvailableJsonFiles();
-    
-    res.json({
-        availableFiles: availableFiles,
-        count: availableFiles.length,
-        fileNames: availableFiles.map(f => f.replace('.json', ''))
-    });
-});
-
-// Endpoint to get network information
-app.get('/network', (req, res) => {
-    res.json({
-        hostname: os.hostname(),
-        networkInterfaces: getNetworkInfo(),
-        serverTime: new Date().toISOString()
-    });
-});
-
-// Handle preflight requests
-app.options('*', (req, res) => {
-    res.sendStatus(200);
-});
-
-// Start server on all available IPs
-const server = app.listen(PORT, '0.0.0.0', () => {
-    const networkInfo = getNetworkInfo();
-    const availableFiles = getAvailableJsonFiles();
-    
-    console.log(`🚀 JSON Server running on port ${PORT}`);
-    console.log(`🌐 Accessible from any IP address on the network`);
-    console.log(`📡 Network Interfaces:`);
-    
-    networkInfo.forEach(net => {
-        console.log(`   - ${net.interface}: http://${net.address}:${PORT}`);
-    });
-    
-    console.log(`\n📁 Available JSON files: ${availableFiles.length}`);
-    availableFiles.forEach(file => {
-        console.log(`   📄 ${file} -> /json/${file.replace('.json', '')}`);
-    });
-    
-    console.log(`\n💡 Usage Examples:`);
-    if (availableFiles.length > 0) {
-        availableFiles.slice(0, 3).forEach(file => {
-            const name = file.replace('.json', '');
-            console.log(`   curl http://${networkInfo[0]?.address || 'localhost'}:${PORT}/json/${name}`);
-        });
-    }
-    console.log(`   curl http://${networkInfo[0]?.address || 'localhost'}:${PORT}/files/list`);
-});
-
-// Graceful shutdown
-process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down server...');
-    server.close(() => {
-        console.log('✅ Server closed');
-        process.exit(0);
-    });
-});
+        // Initial setup
+        document.getElementById('noData').style.display = 'block';
+        
+        // Auto-refresh file list on page load if server URL is already set
+        setTimeout(refreshFileList, 1000);
+    </script>
+</body>
+</html>
