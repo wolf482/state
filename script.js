@@ -1,87 +1,99 @@
 const XLSX = require('xlsx');
 
+// Hardcoded filters for three columns (adjust these as needed)
+const HARDCODED_FILTERS = {
+    'Column2': 'HardcodedValue2',  // Your 2nd column filter
+    'Column3': 'HardcodedValue3',  // Your 3rd column filter
+    'Column4': 'HardcodedValue4'   // Your 4th column filter
+};
+
+// Hardcoded output columns (adjust these to your 9 desired columns)
+const OUTPUT_COLUMNS = [
+    'Column1', 'Column2', 'Column3', 'Column4', 'Column5',
+    'Column6', 'Column7', 'Column8', 'Column9'
+];
+
+function main() {
+    // Get command line argument for the dynamic filter
+    const userValue = process.argv[2];
+    
+    if (!userValue) {
+        console.error('❌ Usage: node filter-script.js <filter-value>');
+        console.error('Example: node filter-script.js "IT"');
+        process.exit(1);
+    }
+    
+    console.log('🚀 Starting XLSB Filter...\n');
+    console.log(`📝 User provided filter value: "${userValue}"`);
+    
+    // Combine hardcoded filters with user-provided filter
+    const allFilters = {
+        'Column1': userValue,  // User value for Column1
+        ...HARDCODED_FILTERS   // Spread the hardcoded filters
+    };
+    
+    console.log('🎯 All filters being applied:', allFilters);
+    
+    const results = filterXLSBWithSelectedColumns(
+        'your_file.xlsb',  // Your file path
+        allFilters,
+        OUTPUT_COLUMNS
+    );
+    
+    if (results.length > 0) {
+        console.log(`\n🎉 Success! Found ${results.length} matching records.`);
+        console.log('📁 Results saved to: filter.xlsx');
+        console.log('📊 Output columns:', OUTPUT_COLUMNS.length, 'columns');
+    } else {
+        console.log('\n❌ No matching records found with the specified filters.');
+    }
+}
+
 function filterXLSBWithSelectedColumns(filePath, filters, outputColumns) {
     try {
-        console.log('Loading .xlsb file...');
-        
-        // Load the binary workbook
+        console.log('\n📂 Loading .xlsb file...');
         const workbook = XLSX.readFile(filePath);
-        
-        // Check available sheets
-        console.log('Available sheets:', workbook.SheetNames);
-        
-        // Get the first sheet
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        
-        if (!worksheet) {
-            throw new Error('Worksheet is undefined - file may be empty or corrupted');
-        }
-        
-        // Convert to JSON
         const data = XLSX.utils.sheet_to_json(worksheet);
         
         console.log('Total rows loaded:', data.length);
         
-        if (data.length === 0) {
-            console.log('No data found in the file');
-            return [];
-        }
+        if (data.length === 0) return [];
         
-        // Show all column names
         const allColumns = Object.keys(data[0]);
-        console.log('All available columns:', allColumns);
-        console.log('Selected output columns:', outputColumns);
+        console.log('All available columns:', allColumns.length, 'columns');
         
-        // Validate that filter columns exist in the data
-        const filterColumns = Object.keys(filters);
-        for (const column of filterColumns) {
-            if (!allColumns.includes(column)) {
-                console.warn(`Warning: Filter column '${column}' not found in the dataset.`);
-                delete filters[column];
-            }
-        }
-        
-        // Validate that output columns exist
+        // Validate output columns
         const validOutputColumns = outputColumns.filter(col => allColumns.includes(col));
         const invalidOutputColumns = outputColumns.filter(col => !allColumns.includes(col));
         
         if (invalidOutputColumns.length > 0) {
-            console.warn(`Warning: These output columns not found: ${invalidOutputColumns.join(', ')}`);
+            console.warn(`⚠️  These output columns not found: ${invalidOutputColumns.join(', ')}`);
         }
         
-        console.log('Applying filters:', filters);
+        if (validOutputColumns.length === 0) {
+            console.error('❌ No valid output columns specified!');
+            return [];
+        }
         
-        // Filter the data based on all specified columns
+        // Apply filters
         const filteredData = data.filter(row => {
-            // Check all filter conditions
             for (const [column, value] of Object.entries(filters)) {
-                // Skip if filter value is empty or null (meaning no filter for this column)
-                if (value === null || value === '' || value === undefined) {
-                    continue;
-                }
+                if (!value) continue;
                 
-                // Handle array values (OR condition - match any of the values)
                 if (Array.isArray(value)) {
-                    let matchFound = false;
-                    for (const val of value) {
-                        if (String(row[column]).toLowerCase() === String(val).toLowerCase()) {
-                            matchFound = true;
-                            break;
-                        }
-                    }
-                    if (!matchFound) {
-                        return false; // Row doesn't match any of the values in the array
-                    }
-                } 
-                // Handle single value
-                else {
+                    const matchFound = value.some(val => 
+                        String(row[column]).toLowerCase() === String(val).toLowerCase()
+                    );
+                    if (!matchFound) return false;
+                } else {
                     if (String(row[column]).toLowerCase() !== String(value).toLowerCase()) {
-                        return false; // Row doesn't match this filter condition
+                        return false;
                     }
                 }
             }
-            return true; // Row matches all filter conditions
+            return true;
         });
         
         console.log(`Filtered data: ${filteredData.length} rows found`);
@@ -95,52 +107,22 @@ function filterXLSBWithSelectedColumns(filePath, filters, outputColumns) {
             return selectedRow;
         });
         
-        // Save filtered results to filter.xlsx with only selected columns
+        // Save to filter.xlsx with only selected columns
         if (outputData.length > 0) {
             const newWorkbook = XLSX.utils.book_new();
             const newWorksheet = XLSX.utils.json_to_sheet(outputData);
             XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Filtered_Data');
             XLSX.writeFile(newWorkbook, 'filter.xlsx');
             console.log('✅ Filtered results saved to filter.xlsx');
-            console.log(`📊 Output includes ${validOutputColumns.length} columns:`, validOutputColumns);
-        } else {
-            console.log('❌ No data matching the filters found. File not saved.');
         }
         
         return outputData;
         
     } catch (error) {
-        console.error('Error reading .xlsb file:', error.message);
+        console.error('Error:', error.message);
         return [];
     }
 }
 
-// USAGE EXAMPLES:
-
-// Example 1: Specify which 9 columns to include in output
-const results1 = filterXLSBWithSelectedColumns('your_file.xlsb', 
-    {
-        'Column1': ['Value1', 'Value2'],  // Column1 can be Value1 OR Value2
-        'Column2': 'Value3',              // Column2 must be Value3
-        'Column3': 'Value4',              // Column3 must be Value4
-        'Column4': 'Value5'               // Column4 must be Value5
-    },
-    [ // Specify exactly which 9 columns to include in output
-        'Column1', 'Column2', 'Column3', 'Column4',
-        'Column5', 'Column6', 'Column7', 'Column8', 'Column9'
-    ]
-);
-
-// Example 2: Real-world example
-const results2 = filterXLSBWithSelectedColumns('your_file.xlsb',
-    {
-        'Department': ['IT', 'Engineering'],
-        'Status': 'Active',
-        'Priority': ['High', 'Critical'],
-        'Region': 'North'
-    },
-    [ // Only these 9 columns will be in the output file
-        'EmployeeID', 'Name', 'Department', 'Position', 
-        'Salary', 'StartDate', 'Status', 'Region', 'Email'
-    ]
-);
+// Run the script
+main();
