@@ -1,55 +1,13 @@
-.rhdh-feature-table {
-  width: 100%;
-  max-width: 100%;
-  background-color: white !important;
-  border: none !important;
-  border-collapse: collapse;
-  table-layout: fixed;
-  margin: 20px 0;
-}
-
-.rhdh-feature-table tr {
-  background-color: white !important;
-}
-
-.rhdh-feature-table td {
-  border: none !important;
-  vertical-align: top;
-  padding: 20px;
-  background-color: white !important;
-}
-
-.rhdh-feature-table .rhdh-image-col {
-  width: 45%;
-  text-align: center;
-  padding-right: 10px;
-}
-
-.rhdh-feature-table .rhdh-text-col {
-  width: 55%;
-  text-align: justify;
-  text-justify: inter-word;
-  padding-left: 10px;
-  line-height: 1.6;
-}
-
-.rhdh-feature-table img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 4px;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .rhdh-feature-table td {
-    display: block;
-    width: 100% !important;
-    padding: 15px !important;
-  }
-  
-  .rhdh-feature-table .rhdh-image-col,
-  .rhdh-feature-table .rhdh-text-col {
-    width: 100% !important;
-    padding: 15px !important;
-  }
-}
+<table class="rhdh-feature-table">
+  <tr>
+    <td class="rhdh-image-col">
+      <img src="path-to-your-image.png" alt="Red Hat Developer Hub Architecture">
+    </td>
+    <td class="rhdh-text-col">
+      <h3>Enterprise-Grade Developer Portal</h3>
+      <p>Red Hat Developer Hub provides a unified interface that streamlines development workflows while maintaining enterprise security standards. Based on the open-source Backstage project, it offers a hardened, supported platform for your development teams.</p>
+      
+      <p>With integrated RBAC through Keycloak and serverless workflow orchestration, organizations can enforce governance while accelerating delivery through standardized templates and automated processes.</p>
+    </td>
+  </tr>
+</table>
