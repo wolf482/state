@@ -1,18 +1,55 @@
-Red Hat Developer Hub: Accelerate Platform-Led Development
-Streamline Development, Standardize Delivery, and Empower Your Teams
+.rhdh-feature-table {
+  width: 100%;
+  max-width: 100%;
+  background-color: white !important;
+  border: none !important;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 20px 0;
+}
 
-In today's competitive landscape, your development teams are burdened with complexity. Sprawling toolchains, inconsistent templates, and manual processes slow down innovation and increase operational risk. You need a centralized, standardized platform to accelerate delivery without compromising security or governance.
+.rhdh-feature-table tr {
+  background-color: white !important;
+}
 
-Red Hat Developer Hub is your enterprise-grade solution. Built on the open-source Backstage project, it creates a unified developer portal that acts as the single pane of glass for your entire application lifecycle. We provide the hardened, supported foundation so your Platform Engineering team can deliver a world-class developer experience.
+.rhdh-feature-table td {
+  border: none !important;
+  vertical-align: top;
+  padding: 20px;
+  background-color: white !important;
+}
 
-Key Business Benefits:
+.rhdh-feature-table .rhdh-image-col {
+  width: 45%;
+  text-align: center;
+  padding-right: 10px;
+}
 
-Accelerate Onboarding & Standardization: Empower developers with self-service access to pre-approved, "golden path" templates for microservices, serverless functions, and other components. This drastically reduces boilerplate code and ensures compliance with organizational standards from day one.
+.rhdh-feature-table .rhdh-text-col {
+  width: 55%;
+  text-align: justify;
+  text-justify: inter-word;
+  padding-left: 10px;
+  line-height: 1.6;
+}
 
-Enhance Security & Governance with Integrated RBAC: Maintain tight control over your software catalog. With integrated Role-Based Access Control (RBAC) and seamless authentication via Keycloak, you can precisely manage who can see, access, and modify software components, APIs, and infrastructure.
+.rhdh-feature-table img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
 
-Orchestrate Workflows with Serverless Power: Automate and streamline complex processes directly from the Developer Hub. By integrating serverless workflows, you can trigger automated pipelines, environment provisioning, and compliance checks, reducing manual toil and ensuring consistent execution.
-
-Improve Visibility & Oversight: Gain a comprehensive, centralized view of all your software assets, their dependencies, and ownership. This unified catalog provides the oversight needed to manage technical debt, improve reliability, and make informed strategic decisions.
-
-Red Hat Developer Hub provides the curated platform your organization needs to boost developer productivity, enforce best practices, and maintain robust security and governance—all powered by Red Hat's enterprise support and expertise.
+/* Responsive design */
+@media (max-width: 768px) {
+  .rhdh-feature-table td {
+    display: block;
+    width: 100% !important;
+    padding: 15px !important;
+  }
+  
+  .rhdh-feature-table .rhdh-image-col,
+  .rhdh-feature-table .rhdh-text-col {
+    width: 100% !important;
+    padding: 15px !important;
+  }
+}
