@@ -1,68 +1,11 @@
-# Enable Flyway
-kie.flyway.enabled=true
-quarkus.flyway.enabled=true
-quarkus.flyway.migrate-at-start=true
-
-# Point to your existing history table
-quarkus.flyway.table=kie_flyway_history_runtime_persistence
-
-# Schema configuration
-quarkus.flyway.schemas=create-ocp-project
-
-# Baseline configuration for existing database
-quarkus.flyway.baseline-on-migrate=true
-quarkus.flyway.baseline-version=1.35.0
-quarkus.flyway.baseline-description=Baseline from SonataWorkflow 1.35.0
-
-# Additional properties to help with migration
-quarkus.flyway.validate-on-migrate=false
-quarkus.flyway.out-of-order=true
 
 
+Following up on the QQMXUI Out of Memory (OOM) issue in production environment.
 
+Red Hat has provided a must-gather image to help us collect the necessary artifacts for troubleshooting this memory issue in production:
 
-SELECT 
-    CASE 
-        WHEN metadata->>'name' LIKE '11840_%' THEN 'service_account'
-        WHEN metadata->>'name' LIKE '%sa' THEN 'support_user' 
-        ELSE 'developer_user'
-    END as user_type,
-    COUNT(*) as count
-FROM cds.user_entities
-GROUP BY user_type;
+Image: ghcr.io/rm31/rhdh-must-gather:main
 
+Please follow the must-gather instructions to collect the required diagnostic data. Once completed, share the output with the Red Hat support case so they can assist with the OOM troubleshooting.
 
-
-
-Task ID	Cadence	Meaning	Purpose
-run_ldap_user_refresh	PT6H	Every 6 Hours	Refreshes user data from LDAP/Active Directory
-run_ldap_group_refresh	PT6H	Every 6 Hours	Refreshes group memberships from LDAP/AD
-run_project_refresh	0 */4 * * *	Every 4 Hours (Cron syntax)	General catalog processing/entity refresh
-run_csi_refresh	0 0 * * *	Daily at Midnight (Cron)	Custom Software Integration refresh
-run_cluster_refresh	0 0 * * *	Daily at Midnight (Cron)	Your OpenShift/Kubernetes cluster refresh
-run_update_request_status...	PT30M	Every 30 Minutes	Internal order management status updates
-
-
-
-
--- Entities with processing errors that haven't been updated in a long time
-SELECT COUNT(*) 
-FROM refresh_state 
-WHERE errors IS NOT NULL 
-  AND next_update_at < NOW() - INTERVAL '30 days'
-  AND last_discovery_at < NOW() - INTERVAL '30 days';-- Find entities that haven't been attempted in a long time and are not scheduled for a future update.
-SELECT COUNT(*), entity_id, status
-FROM refresh_state
-WHERE next_update_at < NOW() - INTERVAL '7 days'
-  AND (last_discovery_at < NOW() - INTERVAL '7 days' OR last_discovery_at IS NULL)
-GROUP BY entity_id, status;
-
-
-
-
--- DELETE entities with errors that are very old and not being processed
-DELETE FROM refresh_state 
-WHERE errors IS NOT NULL 
-  AND next_update_at < NOW() - INTERVAL '30 days'
-  AND last_discovery_at < NOW() - INTERVAL '30 days'
-LIMIT 5000; -- Start with a small batch
+Let me know if you need any clarification on the process.
