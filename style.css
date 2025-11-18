@@ -1,11 +1,3 @@
+I believe those must-gather images should already be mirrored in our internal Artifactory. To stay aligned with our internal sourcing policy, let's pull from there instead of running it imperatively from the external registry.
 
-
-Following up on the QQMXUI Out of Memory (OOM) issue in production environment.
-
-Red Hat has provided a must-gather image to help us collect the necessary artifacts for troubleshooting this memory issue in production:
-
-Image: ghcr.io/rm31/rhdh-must-gather:main
-
-Please follow the must-gather instructions to collect the required diagnostic data. Once completed, share the output with the Red Hat support case so they can assist with the OOM troubleshooting.
-
-Let me know if you need any clarification on the process.
+The internal image should be something like: artifactory.citi.com/.../rhdh-must-gathermain. I can help find the exact path. This way we avoid any potential proxy or sourcing issues.
